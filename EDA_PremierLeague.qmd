@@ -100,7 +100,23 @@ El Análisis Univariante se centra en describir cada variable de forma aislada p
 
 ### 3.1. Detección y Tratamiento de Problemas de Calidad.
 
-#### 3.1.1. Valores Faltantes.
+#### 3.1.1. Correción de detalles en los datos.
+
+Viendo la base de datos, hemos detectado que hay variables como por ejemplo "MP" (Minutos Jugados) que tienen "," para el valor mil. Por lo que hay que eliminar las "," para que R lo pueda interpretar como numérico y no como carácter.
+
+Estrategia: Usaremos código R para eliminar las comas y convertir las variables a numéricas.
+
+```{r}
+
+# Convertir la columna edad que contiene comas a numérica.
+
+datos$Min <- as.numeric(gsub(",","", datos$Min))
+
+```
+
+
+
+#### 3.1.2. Valores Faltantes.
 
 La identificación y el tratamiento de los valores faltantes (NA o similares) es un requisito clave.
 
@@ -118,4 +134,17 @@ missings_por_columna <- datos %>%
 print(missings_por_columna)
 
 ```
+
+Analizando todos los missing values. Hemos detectado que hay 4 jugadores sin edad registrada. Los 144/145 valores faltantes en las demás columnas, se deben a que son jugadores que no han disputado minutos en la temporada, por lo que no tienen datos asociados a rendimiento.
+
+Revisando cuidadosamente el dataset, hemos decidido que excepto los 4 valores de la edad, vamos a cambiar los valores faltantes detectados como N/A a 0. Ya que son variables numéricas.
+
+Con los valores faltantes de edad, vamos a cambiar la edad por la mediana de edad de los jugadores para no perder esas observaciones y no alterar la distribución de la variable.
+
+# TENERIFE
+
+
+
+# BRUNO
+
 
