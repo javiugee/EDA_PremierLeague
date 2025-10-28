@@ -1,31 +1,45 @@
 ---
-title: "Análisis Exploratorio de Datos"
-author: "Javier Ugena, Bruno Guedeja-Marrón, Carlos Suárez"
+title: "Análisis Exploratorio de Datos de la Premier League 2021/2022"
+author:
+  - "Javier Ugena García"
+  - "Gabriel Carlos Suárez Chiquito"
+  - "Bruno Guedeja-Marrón Ramos"
 date: today
+lang: es
 format: 
   html:
     lang: es
     toc: true
+    toc_depth: 3
     theme: cosmo
-  pdf:
-    documentclass: article
+categories:
+  - Inferencia Estadística
+  - Grado en Ciencia e Ingenieria de Datos
 execute:
   warning: false
   echo: true
 ---
-## TITULO 2
 
-## Introducción y definición de objetivos
+## 1. Introducción y Objetivos.
 
-El estudio con los datos obtenidos de la Premier League tiene como objetivo principal analizar y comprender el rendimiento de los jugadores en la liga de fútbol más competitiva del mundo. A través de este análisis, se pretende identificar patrones y tendencias que puedan influir en el desempeño de los jugadores, así como evaluar su contribución al éxito de sus respectivos equipos.
+Esta práctica marca el primer contacto real con un Análisis Exploratorio de Datos (EDA) completo y sistemático , el cual es una fase fundamental en la ciencia de datos.
 
-Para esto se han recogido una serie de datos de los jugadores de la Premier League, incluyendo estadísticas individuales como goles, asistencias, minutos jugados, tarjetas amarillas y rojas, entre otros. Además, se han considerado variables contextuales como la posición del jugador, el equipo al que pertenece y su nacionalidad.
+El objetivo principal de este informe es aplicar técnicas de estadística descriptiva y visualización en el dataset de la Premier League para comprender en profundidad su estructura, identificar patrones, detectar anomalías, y finalmente, formular hipótesis que serán validadas en futuras etapas de inferencia estadística.
 
-Los datos corresponden a la temporada 2021/2023 de la Premier League, y se han obtenido de kaggle.com, una plataforma reconocida por su amplia base de datos deportivos. La elección de esta fuente se debe a la calidad y fiabilidad de los datos proporcionados, así como a la facilidad de acceso para su análisis.
+## 2. Presentación y Descripción del Dataset.
 
-## Importación de datos y carga de librerías
+### 2.1. Contexto y Origen de los Datos.
+
+El conjunto de datos utilizado en esta práctica contiene estadísticas detalladas de jugadores de la Premier League (la máxima división de fútbol en Inglaterra) correspondientes a la temporada 2021/2022.
+
+Estos datos buscan describir el rendimiento deportivo y las características demográficas de los jugadores en la competición. Su origen es Kaggle y han sido recopilados con el fin de analizar variables clave como el número de goles, minutos jugados, pases realizados, y la posición de los jugadores.
+
+### 2.2. Carga y Dimensiones del Dataset.
+
+A continuación, cargamos las librerías necesarias y el conjunto de datos de la Premier League para verificar sus dimensiones (número de observaciones y variables).
 
 ```{r}
+
 library(tidyverse)
 library(dplyr)
 library(summarytools) 
@@ -35,47 +49,73 @@ library(flextable)
 library(knitr) 
 library(corrplot)
 
-datos <- read.csv("datos/datospremier.csv", header = TRUE, sep = ",")
+datos <- read.csv("datos/datospremier.csv")
+
+dimensiones <- dim(datos)
+
+glimpse(datos)
+
 ```
 
-## Diccionario de datos
+### 2.3. Descripción Detallada de las Variables.
 
-| Variable | Descripción                                                 |
-|----------|-------------------------------------------------------------|
-| Player   | Nombre del jugador                                          |
-| Team     | Nombre del equipo                                           |
-| Nation   | Nacionalidad del jugador                                    |
-| Pos      | Posición del jugador                                        |
-| Age      | Edad del jugador                                            |
-| MP       | Minutos jugados                                             |
-| Starts   | Partidos iniciados de titular                               |
-| Min      | Minutos jugados                                             |
-| Gls      | Goles anotados                                              |
-| Ast      | Asistencias realizadas                                      |
-| G.PK     | Goles anotados sin contar penaltis                          |
-| PK       | Penaltis anotados                                           |
-| PKatt    | Penaltis intentados                                         |
-| CrdY     | Tarjetas amarillas                                          |
-| CrdR     | Tarjetas rojas                                              |
-| Gls.1    | Goles anotados por 90 minutos                               |
-| Ast.1    | Asistencias por 90 minutos                                  |
-| G.A      | Goles + Asistencias                                         |
-| G.A.PK   | Goles + Asistencias sin contar penaltis                     |
-| xG       | Goles esperados                                             |
-| npxG     | Goles esperados sin contar penaltis                         |
-| xA       | Asistencias esperadas                                       |
-| xG.xA    | Goles esperados + Asistencias esperadas                     |
-| np.xG.xA | Goles esperados + Asistencias esperadas sin contar penaltis |
+A continuación, se presenta una tabla que detalla cada variable del dataset, incluyendo su tipo estadístico, significado y unidades de medida. Esta descripción es crucial para un análisis riguroso.
 
-Obsservamos el tipo de las variables
+| Variable | Tipo Estadístico | Descripción                         | Unidades de Medida        |
+|----------|------------------|-------------------------------------|---------------------------|
+| Player   | Categórica       | Nombre del jugador                  | N/A                       |
+| Team     | Categórica       | Nombre del equipo                   | N/A                       |
+| Nation   | Categórica       | Nacionalidad del jugador            | N/A                       |
+| Pos      | Categórica       | Posición del jugador                | N/A                       |
+| Age      | Numérica         | Edad del jugador                    | Años                      |
+| MP       | Numérica         | Partidos jugados                    | Minutos                   |
+| Starts   | Numérica         | Partidos iniciados de titular       | Cantidad de partidos      |
+| Min      | Numérica         | Minutos jugados                     | Minutos                   |
+| X90s     | Numérica         | Minutos jugados dividido por 90 minutos     | Cantidad de partidos      |
+| Gls      | Numérica         | Goles anotados                      | Cantidad de goles         |
+| Ast      | Numérica         | Asistencias realizadas              | Cantidad de asistencias   |
+| G.PK     | Numérica         | Goles anotados sin contar penaltis  | Cantidad de goles         |
+| PK       | Numérica         | Penaltis anotados                   | Cantidad de penaltis      |
+| PKatt    | Numérica         | Penaltis intentados                 | Cantidad de penaltis      |
+| CrdY     | Numérica         | Tarjetas amarillas                  | Cantidad de tarjetas      |
+| CrdR     | Numérica         | Tarjetas rojas                      | Cantidad de tarjetas      |
+| Gls.1    | Numérica         | Goles anotados por 90 minutos       | Goles por 90 minutos      |
+| Ast.1    | Numérica         | Asistencias por 90 minutos          | Asistencias por 90 minutos|
+| G.A      | Numérica         | Goles + Asistencias                 | Cantidad total            |
+| G.PK.1  | Numérica         | Goles sin contar penaltis | Cantidad total        |
+| G.A.PK   | Numérica         | Goles + Asistencias sin contar penaltis | Cantidad total    |
+| xG       | Numérica         | Goles esperados                     | Cantidad de goles         |
+| npxG     | Numérica         | Goles esperados sin contar penaltis | Cantidad de goles         |
+| xA       | Numérica         | Asistencias esperadas               | Cantidad de asistencias   |
+| npxG.xA | Numérica         | Goles esperados + Asistencias esperadas sin contar penaltis | Cantidad total    |
+| xG.1 | Numérica         | Goles esperados por 90 minutos      | Goles por 90 minutos      |
+| xA.1 | Numérica         | Asistencias esperadas por 90 minutos| Asistencias por 90 minutos|
+| xG.xA    | Numérica         | Goles esperados + Asistencias esperadas | Cantidad total    |
+| np.xG.1 | Numérica         | Goles esperados sin contar penaltis por 90 minutos | Goles por 90 minutos      |
+| np.xG.xA.1 | Numérica         | Goles esperados + Asistencias esperadas sin contar penaltis por 90 minutos | Cantidad total    |
+
+## 3. Análisis Univariante y Calidad de Datos.
+
+El Análisis Univariante se centra en describir cada variable de forma aislada para comprender su distribución y detectar posibles problemas en los datos.
+
+### 3.1. Detección y Tratamiento de Problemas de Calidad.
+
+#### 3.1.1. Valores Faltantes.
+
+La identificación y el tratamiento de los valores faltantes (NA o similares) es un requisito clave.
+
+Estrategia: Usaremos código R para inspeccionar qué variables tienen missings y en qué proporción, para luego decidir el tratamiento.
+
 ```{r}
-str(datos)
+
+# Contar el total de valores faltantes por columna
+missings_por_columna <- datos %>%
+  summarise_all(~sum(is.na(.))) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "N_Faltantes") %>%
+  filter(N_Faltantes > 0) %>%
+  mutate(Proporcion = N_Faltantes / nrow(datos) * 100)
+
+print(missings_por_columna)
+
 ```
 
-Se observa que todas las variables estan con su tipo excepto la variable 'min' Que en el dataset la lee como char y realmente es de tipo numérica.
-
-## Eliminamos algunas variables que no nos interesan
-
-```{r}
-datos <- datos %>% select(-c(X90s, G.PK.1, xG.1, xA.1, npxG.1, npxG.xA.1))
-```
