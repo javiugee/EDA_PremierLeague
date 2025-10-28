@@ -1,11 +1,81 @@
 ---
-title: "EDA_PremierLeague"
+title: "Análisis Exploratorio de Datos"
+author: "Javier Ugena, Bruno Guedeja-Marrón, Carlos Suárez"
+date: today
+format: 
+  html:
+    lang: es
+    toc: true
+    theme: cosmo
+  pdf:
+    documentclass: article
+execute:
+  warning: false
+  echo: true
 ---
+## TITULO 2
 
-## Quarto
+## Introducción y definición de objetivos
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+El estudio con los datos obtenidos de la Premier League tiene como objetivo principal analizar y comprender el rendimiento de los jugadores en la liga de fútbol más competitiva del mundo. A través de este análisis, se pretende identificar patrones y tendencias que puedan influir en el desempeño de los jugadores, así como evaluar su contribución al éxito de sus respectivos equipos.
+
+Para esto se han recogido una serie de datos de los jugadores de la Premier League, incluyendo estadísticas individuales como goles, asistencias, minutos jugados, tarjetas amarillas y rojas, entre otros. Además, se han considerado variables contextuales como la posición del jugador, el equipo al que pertenece y su nacionalidad.
+
+Los datos corresponden a la temporada 2021/2023 de la Premier League, y se han obtenido de kaggle.com, una plataforma reconocida por su amplia base de datos deportivos. La elección de esta fuente se debe a la calidad y fiabilidad de los datos proporcionados, así como a la facilidad de acceso para su análisis.
+
+## Importación de datos y carga de librerías
 
 ```{r}
-1 + 1
+library(tidyverse)
+library(dplyr)
+library(summarytools) 
+library(GGally) 
+library(gt)
+library(flextable)
+library(knitr) 
+library(corrplot)
+
+datos <- read.csv("datos/datospremier.csv", header = TRUE, sep = ",")
+```
+
+## Diccionario de datos
+
+| Variable | Descripción                                                 |
+|----------|-------------------------------------------------------------|
+| Player   | Nombre del jugador                                          |
+| Team     | Nombre del equipo                                           |
+| Nation   | Nacionalidad del jugador                                    |
+| Pos      | Posición del jugador                                        |
+| Age      | Edad del jugador                                            |
+| MP       | Minutos jugados                                             |
+| Starts   | Partidos iniciados de titular                               |
+| Min      | Minutos jugados                                             |
+| Gls      | Goles anotados                                              |
+| Ast      | Asistencias realizadas                                      |
+| G.PK     | Goles anotados sin contar penaltis                          |
+| PK       | Penaltis anotados                                           |
+| PKatt    | Penaltis intentados                                         |
+| CrdY     | Tarjetas amarillas                                          |
+| CrdR     | Tarjetas rojas                                              |
+| Gls.1    | Goles anotados por 90 minutos                               |
+| Ast.1    | Asistencias por 90 minutos                                  |
+| G.A      | Goles + Asistencias                                         |
+| G.A.PK   | Goles + Asistencias sin contar penaltis                     |
+| xG       | Goles esperados                                             |
+| npxG     | Goles esperados sin contar penaltis                         |
+| xA       | Asistencias esperadas                                       |
+| xG.xA    | Goles esperados + Asistencias esperadas                     |
+| np.xG.xA | Goles esperados + Asistencias esperadas sin contar penaltis |
+
+Obsservamos el tipo de las variables
+```{r}
+str(datos)
+```
+
+Se observa que todas las variables estan con su tipo excepto la variable 'min' Que en el dataset la lee como char y realmente es de tipo numérica.
+
+## Eliminamos algunas variables que no nos interesan
+
+```{r}
+datos <- datos %>% select(-c(X90s, G.PK.1, xG.1, xA.1, npxG.1, npxG.xA.1))
 ```
