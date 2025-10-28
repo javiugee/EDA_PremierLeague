@@ -144,6 +144,130 @@ Con los valores faltantes de edad, vamos a cambiar la edad por la mediana de eda
 # TENERIFE
 
 
+# 2. Presentación y Descripción del Dataset
+
+## Introducción y definición de objetivos
+
+El estudio con los datos obtenidos de la Premier League tiene como objetivo principal analizar y comprender el rendimiento de los jugadores en la liga de fútbol más competitiva del mundo. A través de este análisis, se pretende identificar patrones y tendencias que puedan influir en el desempeño de los jugadores, así como evaluar su contribución al éxito de sus respectivos equipos.
+
+Para esto se han recogido una serie de datos de los jugadores de la Premier League, incluyendo estadísticas individuales como goles, asistencias, minutos jugados, tarjetas amarillas y rojas, entre otros. Además, se han considerado variables contextuales como la posición del jugador, el equipo al que pertenece y su nacionalidad.
+
+Los datos corresponden a la temporada 2021/2023 de la Premier League, y se han obtenido de kaggle.com, una plataforma reconocida por su amplia base de datos deportivos. La elección de esta fuente se debe a la calidad y fiabilidad de los datos proporcionados, así como a la facilidad de acceso para su análisis.
+
+| Variable | Descripción                                                 |
+|----------|-------------------------------------------------------------|
+| Player   | Nombre del jugador                                          |
+| Team     | Nombre del equipo                                           |
+| Nation   | Nacionalidad del jugador                                    |
+| Pos      | Posición del jugador                                        |
+| Age      | Edad del jugador                                            |
+| MP       | Minutos jugados                                             |
+| Starts   | Partidos iniciados de titular                               |
+| Min      | Minutos jugados                                             |
+| Gls      | Goles anotados                                              |
+| Ast      | Asistencias realizadas                                      |
+| G.PK     | Goles anotados sin contar penaltis                          |
+| PK       | Penaltis anotados                                           |
+| PKatt    | Penaltis intentados                                         |
+| CrdY     | Tarjetas amarillas                                          |
+| CrdR     | Tarjetas rojas                                              |
+| Gls.1    | Goles anotados por 90 minutos                               |
+| Ast.1    | Asistencias por 90 minutos                                  |
+| G.A      | Goles + Asistencias                                         |
+| G.A.PK   | Goles + Asistencias sin contar penaltis                     |
+| xG       | Goles esperados                                             |
+| npxG     | Goles esperados sin contar penaltis                         |
+| xA       | Asistencias esperadas                                       |
+| xG.xA    | Goles esperados + Asistencias esperadas                     |
+| np.xG.xA | Goles esperados + Asistencias esperadas sin contar penaltis |
+
+Observamos el tipo de las variables
+
+#### Dimensiones dataset
+
+```{r}
+dim(datos)
+```
+
+Observamos que hay un total 691 filas que corresponden a los jugadores y 24 columnas que son las variables del dataset.
+
+#### Tipos de variables
+
+Obeservamos los tipos de variables que hay en el dataset.
+
+```{r}
+str(datos)
+```
+
+Se observa que todas las variables estan con su tipo excepto la variable 'min' Que en el dataset la lee como char y realmente es de tipo numérica.Por otro lado la variable 'Nation' tiene carácteres especiales. Tambien se observa que las variables Team, Nation y Pos
+
+Corregimos lo menvionado anteriormente de la variable 'Min' y 'Nation'
+
+```{r}
+datos$Min <- as.numeric(gsub(",","", datos$Min))
+datos$Nation <- iconv(datos$Nation, from = "latin1", to = "UTF-8")
+datos$Nation <- str_replace_all(datos$Nation, "[^A-Za-z]", "")
+datos$Team <- as.factor(datos$Team)
+datos$Nation <- as.factor(datos$Nation)
+datos$Pos <- as.factor(datos$Pos)
+
+str(datos)
+```
+
+Observamos que se ha corregido todo correctamente. Las variables Nation, Team y Pos son categoricas.
+
+```{r}
+vars_numeric <- names(datos)[sapply(datos, is.numeric)]
+
+tabla_rangos <- datos %>%
+  summarise(across(
+    all_of(vars_numeric),
+    list(
+      Mínimo = \(x) min(x, na.rm = TRUE),
+      Máximo = \(x) max(x, na.rm = TRUE)
+    )
+  )) %>%
+  tidyr::pivot_longer(
+    cols = everything(),
+    names_to = c("Variable", ".value"),
+    names_sep = "_"
+  )
+kable(tabla_rangos,
+      caption = "Tabla de valores mínimos y máximos de variables numéricas",
+      digits = 2)
+```
+
+```{r}
+
+par(mfrow = c(3, 3))  # 3 columnas x 3 filas
+
+for (var in vars_numeric) {
+  hist(datos[[var]],
+       main = paste("Distribución de", var),
+       xlab = var,
+       col = "gold",
+       border = "black")
+}
+
+```
+```{r}
+vars_factor <- names(datos)[sapply(datos, is.factor)]
+
+for (var in vars_factor) {
+  conteos <- table(datos[[var]])  # cuenta las categorías
+  barplot(conteos,
+          main = paste("Distribución de", var),
+          xlab = var,
+          ylab = "Frecuencia",
+          col = "lightblue",
+          border = "black",
+          las = 2)  # gira etiquetas del eje X para que se lean mejor
+}
+
+# Restaurar la configuración
+par(mfrow = c(1, 1))
+```
+
 
 # BRUNO
 #3. Análisis Univariante y Calidad de Datos (Paso 2)
