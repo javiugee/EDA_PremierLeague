@@ -146,5 +146,29 @@ Con los valores faltantes de edad, vamos a cambiar la edad por la mediana de eda
 
 
 # BRUNO
+#3. Análisis Univariante y Calidad de Datos (Paso 2)
 
+##3.1. Tratamiento y Detección de Problemas de Calidad
+    ###Valores Faltantes (*Missing Values):
+        ####Identificación de variables con valores faltantes y su proporción.
+        
+```{r}
+colSums(is.na(datos))
+datos[rowSums(is.na(datos)) > 0, ]
+```
+        Hay 4 erratas de edad de las cuales en 3 de ellas no sale ni la edad ni el país, por lo que se eliminarán esas filas.  
+        ####Análisis del patrón de los missings.
+        ####Decisión y Justificación del Tratamiento (imputación, eliminación, etc.).
+    ###Inconsistencias y Errores:
+        ####Verificación de consistencia de valores y formatos.
+        ####Detección y tratamiento de duplicados.
+
+##3.2. Análisis Descriptivo por Tipo de Variable*
+    ###Variables Numéricas: Para cada variable relevante:
+        * [cite_start]Cálculo de Estadísticos: Media, Mediana, Moda [cite: 31][cite_start], Desviación Típica, Rango Intercuartílico [cite: 32][cite_start], Asimetría, Curtosis [cite: 33][cite_start], Cuartiles[cite: 34].
+        * [cite_start]Visualizaciones: *Histogramas, **Diagramas de Caja (*Boxplots)**, Gráficos de Densidad, Gráficos Q-Q[cite: 35].
+    * *Variables Categóricas:* Para cada variable relevante:
+        * [cite_start]Tablas de Frecuencia (absolutas y relativas)[cite: 37].
+        * [cite_start]Estadísticos: Moda y distribución[cite: 38].
+        * [cite_start]Visualizaciones: *Gráficos de Barras*, Gráficos de Sectores (solo si hay pocas categorías)[cite: 39].
 
