@@ -48,6 +48,8 @@ library(gt)
 library(flextable)
 library(knitr) 
 library(corrplot)
+library(moments)
+library(skimr)
 
 datos <- read.csv("datos/datospremier.csv")
 
@@ -233,6 +235,54 @@ print(duplicados)
 
 ```
 
+## 3.2. Análisis Descriptivo de variables numéricas.
+
+Para las variables más comunes es necesario realizar un análisis descriptivo completo, que incluya tanto estadísticos como visualizaciones.
+
+```{r}
+
+stats_goals <- datos %>%
+  filter(!is.na(Gls)) %>% 
+  summarise(
+    N_Total = n(),
+    Media = mean(Gls),
+    Mediana = median(Gls),
+    Desviacion_Tipica = sd(Gls),
+    RIQ = IQR(Gls),
+    Asimetria = moments::skewness(Gls),
+    Curtosis = moments::kurtosis(Gls)
+  )
+
+print(stats_goals)
+
+```
+
+A simples vista, la variable Gls (Goles anotados) presenta una distribución asimétrica positiva, con una media mayor que la mediana, lo que indica que hay algunos jugadores con un número muy alto de goles que están influyendo en la media. La desviación típica es relativamente alta, lo que sugiere una gran variabilidad en el número de goles anotados por los jugadores.
+
+Vamos a verlo un poco más visual:
+
+```{r}
+
+#| label: resumen_numericas
+#| echo: true
+
+# skim() genera automáticamente un resumen exhaustivo que incluye:
+# - N faltantes (missings)
+# - N completo
+# - Media, Desviación Estándar (sd)
+# - Cuartiles (p25, p50/Mediana, p75)
+# - Histograma ASCII
+# - Asimetría (en la sección 'numeric')
+# - Y otros estadísticos por defecto para variables numéricas.
+
+resumen_numericas <- datos %>%
+  # Selecciona solo las columnas numéricas relevantes (omite IDs, etc.)
+  select_if(is.numeric) %>%
+  skim()
+
+print(resumen_numericas)
+
+```
 
 
 # TENERIFE
