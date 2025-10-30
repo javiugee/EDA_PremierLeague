@@ -103,6 +103,10 @@ El Análisis Univariante se centra en describir cada variable de forma aislada p
 ### 3.1. Detección y Tratamiento de Problemas de Calidad.
 
 #### 3.1.1. Correción de detalles en los datos.
+```{r}
+str(datos)
+```
+
 
 Viendo la base de datos, hemos detectado que hay variables como por ejemplo "MP" (Minutos Jugados) que tienen "," para el valor mil. Por lo que hay que eliminar las "," para que R lo pueda interpretar como numérico y no como carácter. También, podemos observar que la variable "Nation" tiene caracteres especiales. Además, las variables Team, Nation y Pos deberían ser de tipo factor ya que son variables categóricas. La variables "Pos" tiene valores como "FW,MF" que deberían ser "FW" o "MF", por lo que habría que corregir esos valores.
 
@@ -276,7 +280,7 @@ La variable Age (Edad del jugador) presenta una distribución relativamente sim�
 
 ```{r}
 
-par(mfrow = c(1, 3))  # Configurar para 3 gráficos en una fila
+par(mfrow = c(1, 4))  # Configurar para 3 gráficos en una fila
 # Histograma
 hist(datos$Age,
      main = "Histograma",
@@ -299,6 +303,14 @@ par(mfrow = c(1, 1))  # Restaurar configuración
 ```
 
 En el histograma, podemos observar que la mayoría de los jugadores tienen edades comprendidas entre los 20 y 30 años, con una disminución gradual en la frecuencia a medida que aumenta la edad. El boxplot muestra algunos valores atípicos en el extremo superior, indicando que hay jugadores significativamente mayores que la mayoría. El gráfico de densidad sugiere una distribución aproximadamente normal, con un ligero sesgo hacia la derecha.
+```{r}
+qqnorm(datos$Age); qqline(datos$Age, col = "red")
+
+```
+
+Podemos observar que la mayoría de los puntos se alinean razonablemente bien con la línea diagonal roja, especialmente en la parte central de la distribución. Esto indica que la variable Age presenta una forma aproximadamente normal en su zona media.
+
+Sin embargo, se aprecia una ligera desviación en los extremos (colas izquierda y derecha), donde los puntos se alejan de la línea. Esto sugiere la presencia de ligera asimetría y valores atípicos en edades muy bajas o muy altas, lo que concuerda con lo observado en el histograma y el boxplot
 
 #### 3.2.2 Análisis Descriptivo de la variable MP (Partidos jugados).
 
@@ -696,10 +708,11 @@ plot(datos$Min, datos$Gls,
      ylab = "Goles Anotados",
      col = "blue",
      pch = 19)
-
+pearson_3 <- cor(datos$Min, datos$Gls, method = "pearson")
+print(pearson_3)
 ```
 
-El diagrama de dispersión entre Minutos Jugados y Goles Anotados muestra una tendencia positiva clara, indicando que a medida que los jugadores juegan más minutos, tienden a anotar más goles. Esta relación sugiere que el tiempo de juego es un factor importante para el rendimiento ofensivo de los jugadores.
+El diagrama de dispersión entre Minutos Jugados y Goles Anotados muestra una tendencia positiva clara, indicando que a medida que los jugadores juegan más minutos, tienden a anotar más goles. Esta relación sugiere que el tiempo de juego es un factor importante para el rendimiento ofensivo de los jugadores. Por otro lado, el coeficiente de pearson nos confirma lo visto en el scatter plot que los jugadores cuantos mas minutos jugan tienden a meter más goles, pero el coeficiente no es del todo alto, lo que indica que otras variables como la posición pueden influir también.
 
 ##### B. Diagramas de Dispersión entre Minutos Jugados y Edad del Jugador.
 
@@ -712,9 +725,15 @@ plot(datos$Min, datos$Age,
      col = "red",
      pch = 19)
 
+pearson_2 <- cor(datos$Min, datos$Age, method = "pearson")
+print(pearson_2)
+
 ```
 
 El diagrama de dispersión entre Minutos Jugados y Edad del Jugador no muestra una relación clara. Los jugadores de diferentes edades parecen tener una amplia gama de minutos jugados, lo que sugiere que la edad no es un factor determinante para la cantidad de tiempo que un jugador pasa en el campo.
+
+
+
 
 ##### C. Diagramas de Dispersión entre Goles Anotados y Goles Esperados.
 
@@ -727,10 +746,15 @@ plot(datos$Gls, datos$xG,
      col = "green",
      pch = 19)
 
+
 ```
 
 El diagrama de dispersión entre Goles Anotados y Goles Esperados muestra una relación positiva, indicando que los jugadores que anotan más goles tienden a tener mayores valores de goles esperados. Esta relación sugiere que los jugadores que están en mejores posiciones para anotar (reflejadas por los goles esperados) efectivamente convierten esas oportunidades en goles reales. Por lo tanto, la variable de goles esperados es un buen predictor del rendimiento ofensivo de los jugadores.
-
+```{r}
+pearson_1 <- cor(datos$Gls, datos$xG, method = 'pearson')
+print(pearson_1)
+```
+Obtenemos un valor del coeficiente de pearson alto lo que confirma lo que observamos en el gráfico anteriormente.
 ##### D. Diagramas de Dispersión entre Asistencias Realizadas y Asistencias Esperadas.
 
 ```{r}
@@ -741,10 +765,18 @@ plot(datos$Ast, datos$xA,
      ylab = "Asistencias Esperadas",
      col = "purple",
      pch = 19)
+pearson_4 <- cor(datos$Ast, datos$xA, method = "pearson")
+print(pearson_4)
+```
+
+El diagrama de dispersión entre Asistencias Realizadas y Asistencias Esperadas muestra una relación positiva, indicando que los jugadores que realizan más asistencias tienden a tener mayores valores de asistencias esperadas. Esta relación sugiere que los jugadores que están en mejores posiciones para asistir (reflejadas por las asistencias esperadas) efectivamente convierten esas oportunidades en asistencias reales. Por lo tanto, la variable de asistencias esperadas es un buen predictor del rendimiento ofensivo de los jugadores. 
+
+```{r}
+ggpairs(datos %>% select(Age, Min, Gls, Ast, xG, xA))
 
 ```
 
-El diagrama de dispersión entre Asistencias Realizadas y Asistencias Esperadas muestra una relación positiva, indicando que los jugadores que realizan más asistencias tienden a tener mayores valores de asistencias esperadas. Esta relación sugiere que los jugadores que están en mejores posiciones para asistir (reflejadas por las asistencias esperadas) efectivamente convierten esas oportunidades en asistencias reales. Por lo tanto, la variable de asistencias esperadas es un buen predictor del rendimiento ofensivo de los jugadores.
+El gráfico de pares confirma los patrones observados anteriormente: existe una fuerte relación entre los goles y sus métricas esperadas (Gls–xG) y entre las asistencias y las asistencias esperadas (Ast–xA). Además, se mantiene una correlación moderada entre los minutos jugados y el rendimiento ofensivo, mientras que la edad muestra una influencia limitada sobre el desempeño de los jugadores.
 
 ### 4.2. Análisis Bivariante entre Variables Categóricas y Numéricas.
 
@@ -819,9 +851,15 @@ boxplot(Gls ~ Pos,
         ylab = "Goles Anotados",
         col = "lightcoral")
 
+ggplot(datos, aes(x = Pos, y = Gls, fill = Pos)) +
+  geom_violin() +
+  theme_minimal() +
+  labs(title = "Distribución de goles por posición")
+
 ```
 
-El boxplot de Posición vs Goles Anotados muestra que los delanteros (FW) tienden a anotar más goles en comparación con otras posiciones. Esto es consistente con el rol principal de los delanteros en el equipo, que es marcar goles.
+Tanto el boxplot como el gráfico de violín de Posición vs Goles Anotados confirman que los delanteros (FW) son el grupo con mayor número de goles, lo que coincide con su función principal dentro del equipo.
+Además, el gráfico de violín permite observar la distribución interna de los goles dentro de cada posición: los delanteros muestran una mayor variabilidad y una cola larga hacia valores altos, mientras que defensas (DF) y mediocampistas (MF) concentran la mayoría de sus registros en valores bajos. Los porteros (GK), como era de esperar, apenas registran goles.
 
 ##### B. Boxplots de Posición vs Asistencias Realizadas.
 
@@ -837,6 +875,9 @@ boxplot(Ast ~ Pos,
 ```
 
 El boxplot de Posición vs Asistencias Realizadas muestra que los delanteros (FF) tienden a realizar más asistencias en comparación con otras posiciones. Esto no es consistente con el rol de los delanteros, que generalmente se centran más en anotar goles que en asistir. Sin embargo, algunos delanteros pueden tener habilidades de pase excepcionales y contribuir significativamente a las asistencias del equipo. También habla de un estilo de juego más colaborativo donde los delanteros participan activamente en la creación de oportunidades de gol para sus compañeros de equipo.
+
+
+
 
 #### 4.2.3 Análisis de la variable Equipo con respecto a los minutos jugados y la rotación de jugadores.
 
