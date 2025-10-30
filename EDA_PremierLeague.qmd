@@ -102,9 +102,9 @@ El Análisis Univariante se centra en describir cada variable de forma aislada p
 
 #### 3.1.1. Correción de detalles en los datos.
 
-Viendo la base de datos, hemos detectado que hay variables como por ejemplo "MP" (Minutos Jugados) que tienen "," para el valor mil. Por lo que hay que eliminar las "," para que R lo pueda interpretar como numérico y no como carácter.
+Viendo la base de datos, hemos detectado que hay variables como por ejemplo "MP" (Minutos Jugados) que tienen "," para el valor mil. Por lo que hay que eliminar las "," para que R lo pueda interpretar como numérico y no como carácter. También, podemos observar que la variable "Nation" tiene caracteres especiales. Además, las variables Team, Nation y Pos deberían ser de tipo factor ya que son variables categóricas.
 
-Estrategia: Usaremos código R para eliminar las comas y convertir las variables a numéricas.
+Estrategia: Usaremos código R para corregir estos detalles en los datos.
 
 ```{r}
 
@@ -112,8 +112,68 @@ Estrategia: Usaremos código R para eliminar las comas y convertir las variables
 
 datos$Min <- as.numeric(gsub(",","", datos$Min))
 
+# Corregir la variable Nation
+
+datos$Nation <- iconv(datos$Nation, from = "latin1", to = "UTF-8")
+datos$Nation <- str_replace_all(datos$Nation, "[^A-Za-z]", "")
+
+# Convertir las variables categóricas a factor
+
+datos$Team <- as.factor(datos$Team)
+datos$Nation <- as.factor(datos$Nation)
+datos$Pos <- as.factor(datos$Pos)
+
 ```
 
+```{r}
+# Verificar que se han corregido los datos
+
+str(datos)
+
+vars_numeric <- names(datos)[sapply(datos, is.numeric)]
+
+tabla_rangos <- datos %>%
+  summarise(across(
+    all_of(vars_numeric),
+    list(
+      Mínimo = \(x) min(x, na.rm = TRUE),
+      Máximo = \(x) max(x, na.rm = TRUE)
+    )
+  )) %>%
+  tidyr::pivot_longer(
+    cols = everything(),
+    names_to = c("Variable", ".value"),
+    names_sep = "_"
+  )
+kable(tabla_rangos,
+      caption = "Tabla de valores mínimos y máximos de variables numéricas",
+      digits = 2)
+```
+
+Observando la base de datos, hemos tomado la decisión de eliminar algunas variables que no aportan valor al análisis, como por ejemplo las variables que representan métricas por 90 minutos jugados (X90s, G.PK.1, xG.1, xA.1, npxG.1, npxG.xA.1). Estas variables son derivadas de las métricas totales y pueden generar redundancia en el análisis. Además de generar confusión al interpretar los resultados.
+
+```{r}
+# Eliminar las variables innecesarias
+
+datos <- datos %>% select(-c(X90s, G.PK.1, xG.1, xA.1, npxG.1, npxG.xA.1))
+```
+
+La base de datos ya está corregida y lista para el análisis posterior. Quedaría tal que así:
+
+```{r}
+
+head(datos)
+
+```
+
+Con dimensiones:
+
+```{r}
+
+dim(datos)
+
+
+```
 
 
 #### 3.1.2. Valores Faltantes.
@@ -140,6 +200,40 @@ Analizando todos los missing values. Hemos detectado que hay 4 jugadores sin eda
 Revisando cuidadosamente el dataset, hemos decidido que excepto los 4 valores de la edad, vamos a cambiar los valores faltantes detectados como N/A a 0. Ya que son variables numéricas.
 
 Con los valores faltantes de edad, vamos a cambiar la edad por la mediana de edad de los jugadores para no perder esas observaciones y no alterar la distribución de la variable.
+
+Estrategia: Usaremos código R para realizar estos tratamientos.
+
+```{r}
+# Reemplazar los valores faltantes en variables numéricas por 0
+
+vars_numeric <- names(datos)[sapply(datos, is.numeric)]
+for (var in vars_numeric) {
+  datos[[var]][is.na(datos[[var]])] <- 0
+}
+# Reemplazar los valores faltantes en la variable 'Age' por la mediana
+mediana_edad <- median(datos$Age, na.rm = TRUE)
+datos$Age[is.na(datos$Age)] <- mediana_edad
+
+# Verificar que no hay más valores faltantes
+
+colSums(is.na(datos))
+
+```
+
+#### 3.1.3. Detección y Tratamiento de Duplicados.
+
+Comprobaremos si existen filas duplicadas en el dataset y tomaremos las medidas necesarias para tratarlas.
+
+```{r}
+
+# Verificar duplicados
+
+duplicados <- datos[duplicated(datos), ]
+print(duplicados)
+
+```
+
+
 
 # TENERIFE
 
@@ -199,7 +293,7 @@ Obeservamos los tipos de variables que hay en el dataset.
 str(datos)
 ```
 
-Se observa que todas las variables estan con su tipo excepto la variable 'min' Que en el dataset la lee como char y realmente es de tipo numérica.Por otro lado la variable 'Nation' tiene carácteres especiales. Tambien se observa que las variables Team, Nation y Pos
+Se observa que todas las variables estan con su tipo excepto la variable 'min' Que en el dataset la lee como char y realmente es de tipo numérica.Por otro lado la variable 'Nation' tiene carácteres especiales. Tambien se observa que las variables Team, Nation y Pos deberían ser de tipo factor ya que son variables categóricas.
 
 Corregimos lo menvionado anteriormente de la variable 'Min' y 'Nation'
 
