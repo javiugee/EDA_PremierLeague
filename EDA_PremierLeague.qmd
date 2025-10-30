@@ -63,38 +63,38 @@ glimpse(datos)
 
 A continuación, se presenta una tabla que detalla cada variable del dataset, incluyendo su tipo estadístico, significado y unidades de medida. Esta descripción es crucial para un análisis riguroso.
 
-| Variable | Tipo Estadístico | Descripción                         | Unidades de Medida        |
-|----------|------------------|-------------------------------------|---------------------------|
-| Player   | Categórica       | Nombre del jugador                  | N/A                       |
-| Team     | Categórica       | Nombre del equipo                   | N/A                       |
-| Nation   | Categórica       | Nacionalidad del jugador            | N/A                       |
-| Pos      | Categórica       | Posición del jugador                | N/A                       |
-| Age      | Numérica         | Edad del jugador                    | Años                      |
-| MP       | Numérica         | Partidos jugados                    | Minutos                   |
-| Starts   | Numérica         | Partidos iniciados de titular       | Cantidad de partidos      |
-| Min      | Numérica         | Minutos jugados                     | Minutos                   |
-| X90s     | Numérica         | Minutos jugados dividido por 90 minutos     | Cantidad de partidos      |
-| Gls      | Numérica         | Goles anotados                      | Cantidad de goles         |
-| Ast      | Numérica         | Asistencias realizadas              | Cantidad de asistencias   |
-| G.PK     | Numérica         | Goles anotados sin contar penaltis  | Cantidad de goles         |
-| PK       | Numérica         | Penaltis anotados                   | Cantidad de penaltis      |
-| PKatt    | Numérica         | Penaltis intentados                 | Cantidad de penaltis      |
-| CrdY     | Numérica         | Tarjetas amarillas                  | Cantidad de tarjetas      |
-| CrdR     | Numérica         | Tarjetas rojas                      | Cantidad de tarjetas      |
-| Gls.1    | Numérica         | Goles anotados por 90 minutos       | Goles por 90 minutos      |
-| Ast.1    | Numérica         | Asistencias por 90 minutos          | Asistencias por 90 minutos|
-| G.A      | Numérica         | Goles + Asistencias                 | Cantidad total            |
-| G.PK.1  | Numérica         | Goles sin contar penaltis | Cantidad total        |
-| G.A.PK   | Numérica         | Goles + Asistencias sin contar penaltis | Cantidad total    |
-| xG       | Numérica         | Goles esperados                     | Cantidad de goles         |
-| npxG     | Numérica         | Goles esperados sin contar penaltis | Cantidad de goles         |
-| xA       | Numérica         | Asistencias esperadas               | Cantidad de asistencias   |
-| npxG.xA | Numérica         | Goles esperados + Asistencias esperadas sin contar penaltis | Cantidad total    |
-| xG.1 | Numérica         | Goles esperados por 90 minutos      | Goles por 90 minutos      |
-| xA.1 | Numérica         | Asistencias esperadas por 90 minutos| Asistencias por 90 minutos|
-| xG.xA    | Numérica         | Goles esperados + Asistencias esperadas | Cantidad total    |
-| np.xG.1 | Numérica         | Goles esperados sin contar penaltis por 90 minutos | Goles por 90 minutos      |
-| np.xG.xA.1 | Numérica         | Goles esperados + Asistencias esperadas sin contar penaltis por 90 minutos | Cantidad total    |
+| Variable | Tipo Estadístico | Descripción | Unidades de Medida |
+|------------------|------------------|------------------|------------------|
+| Player | Categórica | Nombre del jugador | N/A |
+| Team | Categórica | Nombre del equipo | N/A |
+| Nation | Categórica | Nacionalidad del jugador | N/A |
+| Pos | Categórica | Posición del jugador | N/A |
+| Age | Numérica | Edad del jugador | Años |
+| MP | Numérica | Partidos jugados | Minutos |
+| Starts | Numérica | Partidos iniciados de titular | Cantidad de partidos |
+| Min | Numérica | Minutos jugados | Minutos |
+| X90s | Numérica | Minutos jugados dividido por 90 minutos | Cantidad de partidos |
+| Gls | Numérica | Goles anotados | Cantidad de goles |
+| Ast | Numérica | Asistencias realizadas | Cantidad de asistencias |
+| G.PK | Numérica | Goles anotados sin contar penaltis | Cantidad de goles |
+| PK | Numérica | Penaltis anotados | Cantidad de penaltis |
+| PKatt | Numérica | Penaltis intentados | Cantidad de penaltis |
+| CrdY | Numérica | Tarjetas amarillas | Cantidad de tarjetas |
+| CrdR | Numérica | Tarjetas rojas | Cantidad de tarjetas |
+| Gls.1 | Numérica | Goles anotados por 90 minutos | Goles por 90 minutos |
+| Ast.1 | Numérica | Asistencias por 90 minutos | Asistencias por 90 minutos |
+| G.A | Numérica | Goles + Asistencias | Cantidad total |
+| G.PK.1 | Numérica | Goles sin contar penaltis | Cantidad total |
+| G.A.PK | Numérica | Goles + Asistencias sin contar penaltis | Cantidad total |
+| xG | Numérica | Goles esperados | Cantidad de goles |
+| npxG | Numérica | Goles esperados sin contar penaltis | Cantidad de goles |
+| xA | Numérica | Asistencias esperadas | Cantidad de asistencias |
+| npxG.xA | Numérica | Goles esperados + Asistencias esperadas sin contar penaltis | Cantidad total |
+| xG.1 | Numérica | Goles esperados por 90 minutos | Goles por 90 minutos |
+| xA.1 | Numérica | Asistencias esperadas por 90 minutos | Asistencias por 90 minutos |
+| xG.xA | Numérica | Goles esperados + Asistencias esperadas | Cantidad total |
+| np.xG.1 | Numérica | Goles esperados sin contar penaltis por 90 minutos | Goles por 90 minutos |
+| np.xG.xA.1 | Numérica | Goles esperados + Asistencias esperadas sin contar penaltis por 90 minutos | Cantidad total |
 
 ## 3. Análisis Univariante y Calidad de Datos.
 
@@ -104,7 +104,7 @@ El Análisis Univariante se centra en describir cada variable de forma aislada p
 
 #### 3.1.1. Correción de detalles en los datos.
 
-Viendo la base de datos, hemos detectado que hay variables como por ejemplo "MP" (Minutos Jugados) que tienen "," para el valor mil. Por lo que hay que eliminar las "," para que R lo pueda interpretar como numérico y no como carácter. También, podemos observar que la variable "Nation" tiene caracteres especiales. Además, las variables Team, Nation y Pos deberían ser de tipo factor ya que son variables categóricas.
+Viendo la base de datos, hemos detectado que hay variables como por ejemplo "MP" (Minutos Jugados) que tienen "," para el valor mil. Por lo que hay que eliminar las "," para que R lo pueda interpretar como numérico y no como carácter. También, podemos observar que la variable "Nation" tiene caracteres especiales. Además, las variables Team, Nation y Pos deberían ser de tipo factor ya que son variables categóricas. La variables "Pos" tiene valores como "FW,MF" que deberían ser "FW" o "MF", por lo que habría que corregir esos valores.
 
 Estrategia: Usaremos código R para corregir estos detalles en los datos.
 
@@ -125,10 +125,19 @@ datos$Team <- as.factor(datos$Team)
 datos$Nation <- as.factor(datos$Nation)
 datos$Pos <- as.factor(datos$Pos)
 
+# Corregir la variable Pos
+
+datos$Pos <- gsub("DF,FW","DF", datos$Pos)
+datos$Pos <- gsub("DF,MF","DF", datos$Pos)
+datos$Pos <- gsub("FW,DF","FW", datos$Pos)
+datos$Pos <- gsub("FW,MF","FW", datos$Pos)
+datos$Pos <- gsub("MF,DF","MF", datos$Pos)
+datos$Pos <- gsub("MF,FW","MF", datos$Pos)
+
 ```
 
 ```{r}
-# Verificar que se han corregido los datos
+# Verificar que se han corregido los datos numéricos
 
 str(datos)
 
@@ -150,6 +159,7 @@ tabla_rangos <- datos %>%
 kable(tabla_rangos,
       caption = "Tabla de valores mínimos y máximos de variables numéricas",
       digits = 2)
+
 ```
 
 Observando la base de datos, hemos tomado la decisión de eliminar algunas variables que no aportan valor al análisis, como por ejemplo las variables que representan métricas por 90 minutos jugados (X90s, G.PK.1, xG.1, xA.1, npxG.1, npxG.xA.1). Estas variables son derivadas de las métricas totales y pueden generar redundancia en el análisis. Además de generar confusión al interpretar los resultados.
@@ -176,7 +186,6 @@ dim(datos)
 
 
 ```
-
 
 #### 3.1.2. Valores Faltantes.
 
@@ -206,12 +215,13 @@ Con los valores faltantes de edad, vamos a cambiar la edad por la mediana de eda
 Estrategia: Usaremos código R para realizar estos tratamientos.
 
 ```{r}
-# Reemplazar los valores faltantes en variables numéricas por 0
+# Reemplazar los valores faltantes en variables numéricas excepto edad por 0
 
-vars_numeric <- names(datos)[sapply(datos, is.numeric)]
-for (var in vars_numeric) {
+vars_numericas <- names(datos)[sapply(datos, is.numeric) & names(datos) != "Age"]
+for (var in vars_numericas) {
   datos[[var]][is.na(datos[[var]])] <- 0
 }
+
 # Reemplazar los valores faltantes en la variable 'Age' por la mediana
 mediana_edad <- median(datos$Age, na.rm = TRUE)
 datos$Age[is.na(datos$Age)] <- mediana_edad
@@ -235,9 +245,165 @@ print(duplicados)
 
 ```
 
-## 3.2. Análisis Descriptivo de variables numéricas.
+### 3.2. Análisis Descriptivo completo de variables numéricas importantes.
 
 Para las variables más comunes es necesario realizar un análisis descriptivo completo, que incluya tanto estadísticos como visualizaciones.
+
+#### 3.2.1 Análisis Descriptivo de la variable Age (Edad del jugador).
+
+##### A. Cálculo de Estadísticos Descriptivos.
+
+```{r}
+
+stats_age <- datos %>%
+  filter(!is.na(Age)) %>% 
+  summarise(
+    N_Total = n(),
+    Media = mean(Age),
+    Mediana = median(Age),
+    Desviacion_Tipica = sd(Age),
+    RIQ = IQR(Age),
+    Asimetria = moments::skewness(Age),
+    Curtosis = moments::kurtosis(Age)
+  )
+print(stats_age)
+
+```
+
+La variable Age (Edad del jugador) presenta una distribución relativamente simétrica, con una media y mediana cercanas. La desviación típica indica una variabilidad moderada en las edades de los jugadores.
+
+##### B. Visualizaciones.
+
+```{r}
+
+par(mfrow = c(1, 3))  # Configurar para 3 gráficos en una fila
+# Histograma
+hist(datos$Age,
+     main = "Histograma",
+     xlab = "Edad",
+     col = "lightblue",
+     border = "black")
+# Boxplot
+boxplot(datos$Age,
+        main = "Boxplot",
+        ylab = "Edad",
+        col = "lightgreen")
+# Gráfico de Densidad
+plot(density(datos$Age),
+     main = "Gráfico de Densidad",
+     xlab = "Edad",
+     col = "purple",
+     lwd = 2)
+par(mfrow = c(1, 1))  # Restaurar configuración
+
+```
+
+En el histograma, podemos observar que la mayoría de los jugadores tienen edades comprendidas entre los 20 y 30 años, con una disminución gradual en la frecuencia a medida que aumenta la edad. El boxplot muestra algunos valores atípicos en el extremo superior, indicando que hay jugadores significativamente mayores que la mayoría. El gráfico de densidad sugiere una distribución aproximadamente normal, con un ligero sesgo hacia la derecha.
+
+#### 3.2.2 Análisis Descriptivo de la variable MP (Partidos jugados).
+
+##### A. Cálculo de Estadísticos Descriptivos.
+
+```{r}
+
+stats_mp <- datos %>%
+  filter(!is.na(MP)) %>% 
+  summarise(
+    N_Total = n(),
+    Media = mean(MP),
+    Mediana = median(MP),
+    Desviacion_Tipica = sd(MP),
+    RIQ = IQR(MP),
+    Asimetria = moments::skewness(MP),
+    Curtosis = moments::kurtosis(MP)
+  )
+print(stats_mp)
+
+```
+
+La variable MP (Partidos jugados) muestra una distribución asimétrica positiva, con una media mayor que la mediana. Esto sugiere que hay algunos jugadores que han jugado un número muy alto de partidos, lo que está influyendo en la media. La desviación típica es alta, indicando una gran variabilidad en los partidos jugados por los jugadores.
+
+##### B. Visualizaciones.
+
+```{r}
+
+par(mfrow = c(1, 3))  # Configurar para 3 gráficos en una fila
+# Histograma
+hist(datos$MP,
+     main = "Histograma",
+     xlab = "Partidos Jugados",
+     col = "lightblue",
+     border = "black")
+# Boxplot
+boxplot(datos$MP,
+        main = "Boxplot",
+        ylab = "Partidos Jugados",
+        col = "lightgreen")
+# Gráfico de Densidad
+plot(density(datos$MP),
+     main = "Gráfico de Densidad",
+     xlab = "Partidos Jugados",
+     col = "purple",
+     lwd = 2)
+par(mfrow = c(1, 1))  # Restaurar configuración
+
+```
+
+#### 3.2.3 Análisis Descriptivo de la variable Min (Minutos jugados).
+
+##### A. Cálculo de Estadísticos Descriptivos.
+
+```{r}
+
+stats_minutes <- datos %>%
+  filter(!is.na(Min)) %>% 
+  summarise(
+    N_Total = n(),
+    Media = mean(Min),
+    Mediana = median(Min),
+    Desviacion_Tipica = sd(Min),
+    RIQ = IQR(Min),
+    Asimetria = moments::skewness(Min),
+    Curtosis = moments::kurtosis(Min)
+  )
+print(stats_minutes)
+
+```
+
+La variable Min (Minutos jugados) muestra una distribución asimétrica positiva, con una media mayor que la mediana. Esto sugiere que hay algunos jugadores que han jugado un número muy alto de minutos, lo que está influyendo en la media. La desviación típica es alta, indicando una gran variabilidad en los minutos jugados por los jugadores.
+
+##### B. Visualizaciones.
+
+```{r}
+
+par(mfrow = c(1, 3))  # Configurar para 3 gráficos en una fila
+# Histograma
+hist(datos$Min,
+     main = "Histograma",
+     xlab = "Minutos Jugados",
+     col = "lightblue",
+     border = "black")
+# Boxplot
+boxplot(datos$Min,
+        main = "Boxplot",
+        ylab = "Minutos Jugados",
+        col = "lightgreen")
+# Gráfico de Densidad
+plot(density(datos$Min),
+     main = "Gráfico de Densidad",
+     xlab = "Minutos Jugados",
+     col = "purple",
+     lwd = 2)
+par(mfrow = c(1, 1))  # Restaurar configuración
+
+
+```
+
+En el histograma, podemos observar que la mayoría de los jugadores han jugado menos de 2000 minutos, con una cola larga hacia la derecha, lo que confirma la asimetría positiva observada en los estadísticos descriptivos. El boxplot muestra varios valores atípicos en el extremo superior, indicando que algunos jugadores han jugado un número excepcionalmente alto de minutos. El gráfico de densidad refuerza la idea de que la distribución está sesgada hacia la derecha.
+
+#### 3.2.4 Análisis Descriptivo de la variable Gls (Goles anotados).
+
+##### A. Cálculo de Estadísticos Descriptivos.
 
 ```{r}
 
@@ -259,184 +425,537 @@ print(stats_goals)
 
 A simples vista, la variable Gls (Goles anotados) presenta una distribución asimétrica positiva, con una media mayor que la mediana, lo que indica que hay algunos jugadores con un número muy alto de goles que están influyendo en la media. La desviación típica es relativamente alta, lo que sugiere una gran variabilidad en el número de goles anotados por los jugadores.
 
-Vamos a verlo un poco más visual:
+###### B. Visualizaciones.
 
 ```{r}
 
-#| label: resumen_numericas
-#| echo: true
+par(mfrow = c(1, 3))  # Configurar para 3 gráficos en una fila
+# Histograma
+hist(datos$Gls,
+     main = "Histograma",
+     xlab = "Goles Anotados",
+     col = "lightblue",
+     border = "black")
+# Boxplot
+boxplot(datos$Gls,
+        main = "Boxplot",
+        ylab = "Goles Anotados",
+        col = "lightgreen")
+# Gráfico de Densidad
+plot(density(datos$Gls),
+     main = "Gráfico de Densidad",
+     xlab = "Goles Anotados",
+     col = "purple",
+     lwd = 2)
+par(mfrow = c(1, 1))  # Restaurar configuración
 
-# skim() genera automáticamente un resumen exhaustivo que incluye:
-# - N faltantes (missings)
-# - N completo
-# - Media, Desviación Estándar (sd)
-# - Cuartiles (p25, p50/Mediana, p75)
-# - Histograma ASCII
-# - Asimetría (en la sección 'numeric')
-# - Y otros estadísticos por defecto para variables numéricas.
+```
 
-resumen_numericas <- datos %>%
-  # Selecciona solo las columnas numéricas relevantes (omite IDs, etc.)
-  select_if(is.numeric) %>%
+Podemos observar en el histograma que la mayoría de los jugadores anotan pocos goles, con una cola larga hacia la derecha, lo que confirma la asimetría positiva observada en los estadísticos descriptivos. El boxplot muestra varios valores atípicos (outliers) en el extremo superior, indicando que algunos jugadores tienen un rendimiento excepcionalmente alto en términos de goles anotados. El gráfico de densidad refuerza la idea de que la distribución está sesgada hacia la derecha.
+
+#### 3.2.5 Análisis Descriptivo de la variable Ast (Asistencias realizadas).
+
+##### A. Cálculo de Estadísticos Descriptivos.
+
+```{r}
+
+stats_assists <- datos %>%
+  filter(!is.na(Ast)) %>% 
+  summarise(
+    N_Total = n(),
+    Media = mean(Ast),
+    Mediana = median(Ast),
+    Desviacion_Tipica = sd(Ast),
+    RIQ = IQR(Ast),
+    Asimetria = moments::skewness(Ast),
+    Curtosis = moments::kurtosis(Ast)
+  )
+print(stats_assists)
+
+```
+
+La variable Ast (Asistencias realizadas) presenta una distribución asimétrica positiva, con una media mayor que la mediana. Esto sugiere que hay algunos jugadores que han realizado un número muy alto de asistencias, lo que está influyendo en la media. La desviación típica es alta, indicando una gran variabilidad en las asistencias realizadas por los jugadores.
+
+##### B. Visualizaciones.
+
+```{r}
+
+par(mfrow = c(1, 3))  # Configurar para 3 gráficos en una fila
+# Histograma
+hist(datos$Ast,
+     main = "Histograma",
+     xlab = "Asistencias Realizadas",
+     col = "lightblue",
+     border = "black")
+# Boxplot
+boxplot(datos$Ast,
+        main = "Boxplot",
+        ylab = "Asistencias Realizadas",
+        col = "lightgreen")
+# Gráfico de Densidad
+plot(density(datos$Ast),
+     main = "Gráfico de Densidad",
+     xlab = "Asistencias Realizadas",
+     col = "purple",
+     lwd = 2)
+par(mfrow = c(1, 1))  # Restaurar configuración
+
+```
+
+En el histograma, podemos observar que la mayoría de los jugadores han realizado pocas asistencias, con una cola larga hacia la derecha, lo que confirma la asimetría positiva observada en los estadísticos descriptivos. El boxplot muestra varios valores atípicos en el extremo superior, indicando que algunos jugadores han realizado un número excepcionalmente alto de asistencias. El gráfico de densidad refuerza la idea de que la distribución está sesgada hacia la derecha.
+
+### 3.3. Análisis Descriptivo de Variables numéricas restantes.
+
+#### 3.3.1 Cálculo de Estadísticos Descriptivos Resumidos.
+
+Para las variables numéricas restantes, se realizará un análisis descriptivo resumido utilizando la función `skim()` del paquete `skimr`, que proporciona una visión general rápida de las estadísticas clave para cada variable numérica.
+
+```{r}
+
+variables_excluidas <- c("MP", "Gls", "Ast", "Age", "Min") 
+
+resumen_resto_numericas <- datos %>%
+  select(where(is.numeric), -all_of(variables_excluidas)) %>%
   skim()
 
-print(resumen_numericas)
+print(resumen_resto_numericas)
 
 ```
 
+El análisis descriptivo resumido de las variables numéricas restantes revela diversas características estadísticas. La mayoría de estas variables presentan una alta asimetría positiva, lo que indica que hay valores extremos que influyen en la media. Además, muchas de estas variables tienen una desviación típica considerablemente alta, lo que sugiere una gran variabilidad en los datos. Es importante tener en cuenta estos aspectos al interpretar los resultados y considerar posibles transformaciones o tratamientos adicionales si es necesario en etapas posteriores del análisis.
 
-# TENERIFE
-
-
-# 2. Presentación y Descripción del Dataset
-
-## Introducción y definición de objetivos
-
-El estudio con los datos obtenidos de la Premier League tiene como objetivo principal analizar y comprender el rendimiento de los jugadores en la liga de fútbol más competitiva del mundo. A través de este análisis, se pretende identificar patrones y tendencias que puedan influir en el desempeño de los jugadores, así como evaluar su contribución al éxito de sus respectivos equipos.
-
-Para esto se han recogido una serie de datos de los jugadores de la Premier League, incluyendo estadísticas individuales como goles, asistencias, minutos jugados, tarjetas amarillas y rojas, entre otros. Además, se han considerado variables contextuales como la posición del jugador, el equipo al que pertenece y su nacionalidad.
-
-Los datos corresponden a la temporada 2021/2023 de la Premier League, y se han obtenido de kaggle.com, una plataforma reconocida por su amplia base de datos deportivos. La elección de esta fuente se debe a la calidad y fiabilidad de los datos proporcionados, así como a la facilidad de acceso para su análisis.
-
-| Variable | Descripción                                                 |
-|----------|-------------------------------------------------------------|
-| Player   | Nombre del jugador                                          |
-| Team     | Nombre del equipo                                           |
-| Nation   | Nacionalidad del jugador                                    |
-| Pos      | Posición del jugador                                        |
-| Age      | Edad del jugador                                            |
-| MP       | Minutos jugados                                             |
-| Starts   | Partidos iniciados de titular                               |
-| Min      | Minutos jugados                                             |
-| Gls      | Goles anotados                                              |
-| Ast      | Asistencias realizadas                                      |
-| G.PK     | Goles anotados sin contar penaltis                          |
-| PK       | Penaltis anotados                                           |
-| PKatt    | Penaltis intentados                                         |
-| CrdY     | Tarjetas amarillas                                          |
-| CrdR     | Tarjetas rojas                                              |
-| Gls.1    | Goles anotados por 90 minutos                               |
-| Ast.1    | Asistencias por 90 minutos                                  |
-| G.A      | Goles + Asistencias                                         |
-| G.A.PK   | Goles + Asistencias sin contar penaltis                     |
-| xG       | Goles esperados                                             |
-| npxG     | Goles esperados sin contar penaltis                         |
-| xA       | Asistencias esperadas                                       |
-| xG.xA    | Goles esperados + Asistencias esperadas                     |
-| np.xG.xA | Goles esperados + Asistencias esperadas sin contar penaltis |
-
-Observamos el tipo de las variables
-
-#### Dimensiones dataset
-
-```{r}
-dim(datos)
-```
-
-Observamos que hay un total 691 filas que corresponden a los jugadores y 24 columnas que son las variables del dataset.
-
-#### Tipos de variables
-
-Obeservamos los tipos de variables que hay en el dataset.
-
-```{r}
-str(datos)
-```
-
-Se observa que todas las variables estan con su tipo excepto la variable 'min' Que en el dataset la lee como char y realmente es de tipo numérica.Por otro lado la variable 'Nation' tiene carácteres especiales. Tambien se observa que las variables Team, Nation y Pos deberían ser de tipo factor ya que son variables categóricas.
-
-Corregimos lo menvionado anteriormente de la variable 'Min' y 'Nation'
-
-```{r}
-datos$Min <- as.numeric(gsub(",","", datos$Min))
-datos$Nation <- iconv(datos$Nation, from = "latin1", to = "UTF-8")
-datos$Nation <- str_replace_all(datos$Nation, "[^A-Za-z]", "")
-datos$Team <- as.factor(datos$Team)
-datos$Nation <- as.factor(datos$Nation)
-datos$Pos <- as.factor(datos$Pos)
-
-str(datos)
-```
-
-Observamos que se ha corregido todo correctamente. Las variables Nation, Team y Pos son categoricas.
-
-```{r}
-vars_numeric <- names(datos)[sapply(datos, is.numeric)]
-
-tabla_rangos <- datos %>%
-  summarise(across(
-    all_of(vars_numeric),
-    list(
-      Mínimo = \(x) min(x, na.rm = TRUE),
-      Máximo = \(x) max(x, na.rm = TRUE)
-    )
-  )) %>%
-  tidyr::pivot_longer(
-    cols = everything(),
-    names_to = c("Variable", ".value"),
-    names_sep = "_"
-  )
-kable(tabla_rangos,
-      caption = "Tabla de valores mínimos y máximos de variables numéricas",
-      digits = 2)
-```
+##### 3.3.2 Visualizaciones Resumidas.
 
 ```{r}
 
-par(mfrow = c(3, 3))  # 3 columnas x 3 filas
-
-for (var in vars_numeric) {
-  hist(datos[[var]],
-       main = paste("Distribución de", var),
+par(mfrow = c(3, 3))  # Configurar para 9 gráficos en una cuadrícula 3x3
+variables_numericas_resto <- datos %>%
+  select(where(is.numeric), -all_of(variables_excluidas))
+for (var in names(variables_numericas_resto)) {
+  hist(variables_numericas_resto[[var]],
+       main = paste("Histograma de", var),
        xlab = var,
-       col = "gold",
+       col = "lightblue",
        border = "black")
 }
 
 ```
+
 ```{r}
-vars_factor <- names(datos)[sapply(datos, is.factor)]
 
-for (var in vars_factor) {
-  conteos <- table(datos[[var]])  # cuenta las categorías
-  barplot(conteos,
-          main = paste("Distribución de", var),
-          xlab = var,
-          ylab = "Frecuencia",
-          col = "lightblue",
-          border = "black",
-          las = 2)  # gira etiquetas del eje X para que se lean mejor
-}
+par(mfrow = c(1, 1))  # Restaurar configuración
 
-# Restaurar la configuración
-par(mfrow = c(1, 1))
 ```
 
 
-# BRUNO
-#3. Análisis Univariante y Calidad de Datos (Paso 2)
+Estas visualizaciones proporcionan una visión general de la distribución de las variables numéricas restantes en el dataset. La mayoría de los histogramas muestran distribuciones asimétricas positivas, con colas largas hacia la derecha, lo que indica la presencia de valores extremos. Estos patrones son consistentes con los estadísticos descriptivos calculados anteriormente y sugieren que se deben considerar cuidadosamente estos aspectos en análisis posteriores.
 
-##3.1. Tratamiento y Detección de Problemas de Calidad
-    ###Valores Faltantes (*Missing Values):
-        ####Identificación de variables con valores faltantes y su proporción.
-        
+### 3.4. Análisis Descriptivo de Variables Categóricas.
+
+#### 3.4.1. Análisis de la variable Team (Equipo).
+
+##### A. Frecuencias Absolutas y Relativas.
+
 ```{r}
-colSums(is.na(datos))
-datos[rowSums(is.na(datos)) > 0, ]
-```
-        Hay 4 erratas de edad de las cuales en 3 de ellas no sale ni la edad ni el país, por lo que se eliminarán esas filas.  
-        ####Análisis del patrón de los missings.
-        ####Decisión y Justificación del Tratamiento (imputación, eliminación, etc.).
-    ###Inconsistencias y Errores:
-        ####Verificación de consistencia de valores y formatos.
-        ####Detección y tratamiento de duplicados.
 
-##3.2. Análisis Descriptivo por Tipo de Variable*
-    ###Variables Numéricas: Para cada variable relevante:
-        * [cite_start]Cálculo de Estadísticos: Media, Mediana, Moda [cite: 31][cite_start], Desviación Típica, Rango Intercuartílico [cite: 32][cite_start], Asimetría, Curtosis [cite: 33][cite_start], Cuartiles[cite: 34].
-        * [cite_start]Visualizaciones: *Histogramas, **Diagramas de Caja (*Boxplots)**, Gráficos de Densidad, Gráficos Q-Q[cite: 35].
-    * *Variables Categóricas:* Para cada variable relevante:
-        * [cite_start]Tablas de Frecuencia (absolutas y relativas)[cite: 37].
-        * [cite_start]Estadísticos: Moda y distribución[cite: 38].
-        * [cite_start]Visualizaciones: *Gráficos de Barras*, Gráficos de Sectores (solo si hay pocas categorías)[cite: 39].
+frecuencias_team <- datos %>%
+  group_by(Team) %>%
+  summarise(
+    Frecuencia_Absoluta = n(),
+    Frecuencia_Relativa = n() / nrow(datos) * 100
+  ) %>%
+  arrange(desc(Frecuencia_Absoluta))
+print(frecuencias_team)
+
+```
+
+El análisis de la variable Team (Equipo) revela la distribución de jugadores entre los diferentes equipos de la Premier League. Algunos equipos tienen una representación significativamente mayor en el dataset, lo que podría reflejar su tamaño, popularidad o éxito en la liga. Esta información es crucial para entender cómo se distribuyen los jugadores y puede influir en análisis posteriores relacionados con el rendimiento del equipo.
+
+##### B. Visualizaciones.
+
+```{r}
+
+# Gráfico de Barras
+barplot(table(datos$Team),
+        main = "Gráfico de Barras de Equipos",
+        ylab = "Número de Jugadores",
+        col = "lightblue",
+        las = 2)
+
+```
+
+#### 3.4.2. Análisis de la variable Pos (Posición del jugador).
+
+##### A. Frecuencias Absolutas y Relativas.
+
+```{r}
+
+frecuencias_pos <- datos %>%
+  group_by(Pos) %>%
+  summarise(
+    Frecuencia_Absoluta = n(),
+    Frecuencia_Relativa = n() / nrow(datos) * 100
+  ) %>%
+  arrange(desc(Frecuencia_Absoluta))
+print(frecuencias_pos)
+
+```
+
+El análisis de la variable Pos (Posición del jugador) revela la distribución de jugadores en diferentes posiciones dentro del campo. Algunas posiciones, como mediocampistas y delanteros, tienen una representación significativamente mayor en el dataset, lo que podría reflejar la importancia estratégica de estas posiciones en el juego. Esta información es crucial para entender cómo se distribuyen los jugadores según sus roles y puede influir en análisis posteriores relacionados con el rendimiento individual y colectivo.
+
+##### B. Visualizaciones.
+
+```{r}
+
+# Gráfico de Barras ordenado de mayor a menor
+pos_counts <- table(datos$Pos)
+pos_counts <- pos_counts[order(-pos_counts)]
+barplot(pos_counts,
+        main = "Gráfico de Barras de Posiciones",
+        ylab = "Número de Jugadores",
+        col = "lightgreen",
+        las = 2)
+
+```
+
+Podemos observar en el gráfico de barras que la posición de defensas (DF) es la más común entre los jugadores del dataset, seguida por delanteros (FW) y mediocentros (MF). Esta distribución refleja la importancia estratégica de estas posiciones en el juego y puede influir en análisis posteriores relacionados con el rendimiento individual y colectivo.
+
+#### 3.4.3. Análisis de la variable Nation (Nacionalidad del jugador).
+
+##### A. Frecuencias Absolutas y Relativas.
+
+```{r}
+frecuencias_nation <- datos %>%
+  group_by(Nation) %>%
+  summarise(
+    Frecuencia_Absoluta = n(),
+    Frecuencia_Relativa = n() / nrow(datos) * 100
+  ) %>%
+  arrange(desc(Frecuencia_Absoluta))
+print(frecuencias_nation)
+```
+
+El análisis de la variable Nation (Nacionalidad del jugador) revela la diversidad de orígenes entre los jugadores de la Premier League. Algunos países tienen una representación significativamente mayor en el dataset, lo que podría reflejar factores como la popularidad del fútbol en esos países, las políticas de reclutamiento de los equipos, o la presencia de academias de formación. Esta información es crucial para entender cómo se distribuyen los jugadores según su nacionalidad y puede influir en análisis posteriores relacionados con el rendimiento individual y colectivo.
+
+##### B. Visualizaciones.
+
+```{r}
+# Gráfico de Barras ordenado de mayor a menor
+nation_counts <- table(datos$Nation)
+nation_counts <- nation_counts[order(-nation_counts)]
+barplot(nation_counts,
+        main = "Gráfico de Barras de Nacionalidades",
+        ylab = "Número de Jugadores",
+        col = "lightcoral",
+        las = 2)
+```
+
+Hay claramente una dominancia de jugadores con la nacionalidad inglesa, seguida por jugadores de otras nacionalidades europeas. Esta distribución refleja la influencia del fútbol inglés en la Premier League y puede tener implicaciones en términos de estilo de juego, tácticas y rendimiento del equipo.
+
+## 4. Análisis Bivariante.
+
+El Análisis Bivariante se centra en explorar las relaciones entre pares de variables para identificar patrones y asociaciones.
+
+### 4.1. Análisis de Correlación entre Variables Numéricas.
+
+#### 4.1.1. Cálculo de la Matriz de Correlación.
+
+```{r}
+
+# Seleccionar solo las variables numéricas
+variables_numericas <- datos %>%
+  select(where(is.numeric))
+# Calcular la matriz de correlación
+matriz_correlacion <- cor(variables_numericas)
+print(matriz_correlacion)
+```
+
+#### 4.1.2. Visualización de la Matriz de Correlación.
+
+```{r}
+# Visualización de la matriz de correlación
+corrplot(matriz_correlacion, method = "color", type = "upper",
+         tl.col = "black", tl.srt = 45, 
+         title = "Matriz de Correlación entre Variables Numéricas",
+         mar = c(0,0,1,0))
+```
+
+La matriz de correlación revela varias relaciones significativas entre las variables numéricas del dataset. Por ejemplo, se observa una fuerte correlación positiva entre los minutos jugados (Min) y los goles anotados (Gls), lo que sugiere que los jugadores que juegan más minutos tienden a anotar más goles. Además, hay una correlación positiva moderada entre las asistencias realizadas (Ast) y los goles anotados (Gls), indicando que los jugadores que asisten más también tienden a anotar más goles. Estas relaciones son cruciales para entender cómo diferentes aspectos del rendimiento de los jugadores están interconectados y pueden influir en su éxito en el campo.
+
+No se puede observar ninguna correlación negativa significativa entre las variables numéricas, lo que indica que no hay relaciones inversas fuertes en este conjunto de datos.
+
+#### 4.1.3. Análisis de Parejas de Variables Numéricas. (Diagramas de Dispersión).
+
+##### A. Diagramas de Dispersión entre Minutos Jugados y Goles Anotados.
+
+```{r}
+
+plot(datos$Min, datos$Gls,
+     main = "Diagrama de Dispersión: Minutos Jugados vs Goles Anotados",
+     xlab = "Minutos Jugados",
+     ylab = "Goles Anotados",
+     col = "blue",
+     pch = 19)
+
+```
+
+El diagrama de dispersión entre Minutos Jugados y Goles Anotados muestra una tendencia positiva clara, indicando que a medida que los jugadores juegan más minutos, tienden a anotar más goles. Esta relación sugiere que el tiempo de juego es un factor importante para el rendimiento ofensivo de los jugadores.
+
+##### B. Diagramas de Dispersión entre Minutos Jugados y Edad del Jugador.
+
+```{r}
+
+plot(datos$Min, datos$Age,
+     main = "Diagrama de Dispersión: Minutos Jugados vs Edad del Jugador",
+     xlab = "Minutos Jugados",
+     ylab = "Edad del Jugador",
+     col = "red",
+     pch = 19)
+
+```
+
+El diagrama de dispersión entre Minutos Jugados y Edad del Jugador no muestra una relación clara. Los jugadores de diferentes edades parecen tener una amplia gama de minutos jugados, lo que sugiere que la edad no es un factor determinante para la cantidad de tiempo que un jugador pasa en el campo.
+
+##### C. Diagramas de Dispersión entre Goles Anotados y Goles Esperados.
+
+```{r}
+
+plot(datos$Gls, datos$xG,
+     main = "Diagrama de Dispersión: Goles Anotados vs Goles Esperados",
+     xlab = "Goles Anotados",
+     ylab = "Goles Esperados",
+     col = "green",
+     pch = 19)
+
+```
+
+El diagrama de dispersión entre Goles Anotados y Goles Esperados muestra una relación positiva, indicando que los jugadores que anotan más goles tienden a tener mayores valores de goles esperados. Esta relación sugiere que los jugadores que están en mejores posiciones para anotar (reflejadas por los goles esperados) efectivamente convierten esas oportunidades en goles reales. Por lo tanto, la variable de goles esperados es un buen predictor del rendimiento ofensivo de los jugadores.
+
+##### D. Diagramas de Dispersión entre Asistencias Realizadas y Asistencias Esperadas.
+
+```{r}
+
+plot(datos$Ast, datos$xA,
+     main = "Diagrama de Dispersión: Asistencias Realizadas vs Asistencias Esperadas",
+     xlab = "Asistencias Realizadas",
+     ylab = "Asistencias Esperadas",
+     col = "purple",
+     pch = 19)
+
+```
+
+El diagrama de dispersión entre Asistencias Realizadas y Asistencias Esperadas muestra una relación positiva, indicando que los jugadores que realizan más asistencias tienden a tener mayores valores de asistencias esperadas. Esta relación sugiere que los jugadores que están en mejores posiciones para asistir (reflejadas por las asistencias esperadas) efectivamente convierten esas oportunidades en asistencias reales. Por lo tanto, la variable de asistencias esperadas es un buen predictor del rendimiento ofensivo de los jugadores.
+
+### 4.2. Análisis Bivariante entre Variables Categóricas y Numéricas.
+
+#### 4.2.1 Análisis de la variable edad con respecto a los goles y asistencias.
+
+Queremos ver si la edad del jugador influye en su rendimiento ofensivo, medido por goles y asistencias.
+
+##### A. Boxplots de Edad vs Goles Anotados.
+
+```{r}
+
+boxplot(Gls ~ cut(Age, breaks = c(15, 20, 25, 30, 35, 40)),
+        data = datos,
+        main = "Boxplot: Edad vs Goles Anotados",
+        xlab = "Rango de Edad",
+        ylab = "Goles Anotados",
+        col = "lightblue")
+
+```
+
+El boxplot de Edad vs Goles Anotados muestra que los jugadores en el rango de edad de 25 a 30 años tienden a anotar más goles en comparación con otros grupos de edad. Esto sugiere que los jugadores en esta etapa de su carrera pueden estar en su pico de rendimiento ofensivo.
+
+También observamos que hay un jugador entre los 35 y los 40 años que ha anotado una cantidad significativa de goles, lo que indica que algunos jugadores pueden mantener un alto nivel de rendimiento incluso en edades avanzadas.
+
+Ese jugador es:
+
+```{r}
+
+datos %>%
+  filter(Age >= 35 & Age <= 40 & Gls == max(Gls[Age >= 35 & Age <= 40])) %>%
+  select(Player, Age, Gls, Team)
+
+```
+
+##### B. Boxplots de Edad vs Asistencias Realizadas.
+
+```{r}
+
+boxplot(Ast ~ cut(Age, breaks = c(15, 20, 25, 30, 35, 40)),
+        data = datos,
+        main = "Boxplot: Edad vs Asistencias Realizadas",
+        xlab = "Rango de Edad",
+        ylab = "Asistencias Realizadas",
+        col = "lightgreen")
+
+```
+
+El boxplot de Edad vs Asistencias Realizadas muestra que los jugadores en el rango de edad de 25 a 30 años tienden a realizar más asistencias en comparación con otros grupos de edad. Esto sugiere que los jugadores en esta etapa de su carrera pueden estar en su pico de rendimiento ofensivo.
+
+El jugador que más destaca es:
+
+```{r}
+
+datos %>%
+  filter(Age >= 25 & Age < 30 & Ast == max(Ast[Age >= 25 & Age < 30])) %>%
+  select(Player, Age, Ast, Team)
+
+```
+
+#### 4.2.2 Análisis de la variable Posición con respecto a los goles y asistencias.
+
+Queremos ver si la posición del jugador influye en su rendimiento ofensivo, medido por goles y asistencias.
+
+##### A. Boxplots de Posición vs Goles Anotados.
+
+```{r}
+
+boxplot(Gls ~ Pos,
+        data = datos,
+        main = "Boxplot: Posición vs Goles Anotados",
+        xlab = "Posición",
+        ylab = "Goles Anotados",
+        col = "lightcoral")
+
+```
+
+El boxplot de Posición vs Goles Anotados muestra que los delanteros (FW) tienden a anotar más goles en comparación con otras posiciones. Esto es consistente con el rol principal de los delanteros en el equipo, que es marcar goles.
+
+##### B. Boxplots de Posición vs Asistencias Realizadas.
+
+```{r}
+
+boxplot(Ast ~ Pos,
+        data = datos,
+        main = "Boxplot: Posición vs Asistencias Realizadas",
+        xlab = "Posición",
+        ylab = "Asistencias Realizadas",
+        col = "lightseagreen")
+
+```
+
+El boxplot de Posición vs Asistencias Realizadas muestra que los delanteros (FF) tienden a realizar más asistencias en comparación con otras posiciones. Esto no es consistente con el rol de los delanteros, que generalmente se centran más en anotar goles que en asistir. Sin embargo, algunos delanteros pueden tener habilidades de pase excepcionales y contribuir significativamente a las asistencias del equipo. También habla de un estilo de juego más colaborativo donde los delanteros participan activamente en la creación de oportunidades de gol para sus compañeros de equipo.
+
+#### 4.2.3 Análisis de la variable Equipo con respecto a los minutos jugados y la rotación de jugadores.
+
+Queremos ver si equipos que compiten a nivel internacional tienen una mayor rotación de jugadores en comparación a equipos que jueguen a nivel nacional. Debido a que tienen más o menos carga de partidos. Los equipos con más partidos deberán seguir una mayor rotación de jugadores que equipos más pequeños.
+
+```{r}
+
+#| label: boxplot_minutos_por_equipo
+#| echo: true
+#| fig-width: 12
+#| fig-height: 8
+
+# 1. Preparar y ordenar los datos
+# Usamos 'datos' y las columnas 'Min' y 'Team'
+df_minutos_club <- datos %>%
+  # Limpiar missings si existen
+  filter(!is.na(Min), !is.na(Team)) %>%
+  
+  # 2. Ordenar el factor 'Team' por la mediana de 'Min'
+  # fct_reorder es útil para que los clubes aparezcan en orden lógico en el eje X
+  mutate(Team = fct_reorder(Team, Min, .fun = median))
+
+# 3. Generar el Boxplot
+p_minutos_club <- df_minutos_club %>%
+  ggplot(aes(x = Team, y = Min, fill = Team)) +
+  geom_boxplot(alpha = 0.8, outlier.color = "red") +
+  labs(title = "Distribución de Minutos Jugados por Equipo", 
+       subtitle = "Ordenado por la Mediana de Minutos (Min)",
+       x = "Equipo (Ordenado por Mediana de Minutos)", 
+       y = "Minutos Jugados (Min)") +
+  theme_minimal() +
+  # Rotar etiquetas del eje X para evitar solapamiento (necesario si hay muchos clubes)
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none") # Eliminar leyenda
+
+print(p_minutos_club)
+
+```
+
+El gráfico revela una clara disparidad en la **gestión de plantillas** entre los equipos: clubes como **Man. United** y **Chelsea** muestran una **alta dispersión** (cajas largas) en los minutos, indicando mucha rotación o inestabilidad. En contraste, equipos como **Liverpool** y **Man. City** presentan **baja dispersión** (cajas cortas) y medianas altas, lo que sugiere una mayor dependencia de un **núcleo fijo** de jugadores. Los *outliers* superiores en casi todos los equipos confirman la existencia de un pequeño grupo de jugadores que acumulan la inmensa mayoría de los minutos.
+
+Estos patrones reflejan las diferentes estrategias de gestión de plantillas adoptadas por los clubes, posiblemente influenciadas por su participación en competiciones internacionales y la carga de partidos asociada.
+
+### Análisis Bivariante de Variables Categóricas.
+
+#### 4.3.1 Análisis de la variable Posición con respecto al Equipo.
+
+##### A. Tabla de Contingencia de Posición vs Equipo.
+
+```{r}
+
+tabla_pos_equipo <- table(datos$Pos, datos$Team)
+print(tabla_pos_equipo)
+
+```
+
+##### B. Visualización de la Distribución de Posiciones por Equipo.
+
+```{r}
+
+# Gráfico de barras apiladas
+
+barplot(tabla_pos_equipo,
+        main = "Distribución de Posiciones por Equipo",
+        ylab = "Número de Jugadores",
+        col = rainbow(nrow(tabla_pos_equipo)),
+        legend = rownames(tabla_pos_equipo),
+        las = 2)
+
+```
+
+El gráfico de barras apiladas revela la **asociación entre el equipo y la composición de su plantilla**. Al observar las proporciones de los colores (grupos de posición) para cada equipo, se identifica si algún club se desvía del promedio de la liga. Por ejemplo, si un equipo muestra una proporción notablemente mayor de jugadores en la categoría **Ataque** que el resto, indica un posible **sesgo en el *scouting*** o un **énfasis táctico** en esa área del campo. Este análisis fundamenta una pregunta sobre si esta composición de plantilla es **independiente** del club.
+
+## 4. Identificación de Patrones y Formulación de Preguntas.
+
+El EDA ha permitido la transición de la descripción a la síntesis, revelando patrones fundamentales que requieren validación formal mediante Inferencia Estadística.
+
+### 4.1 Identificación y Descripción de los Patrones principales.
+
+Los patrones se basan en la evidencia observada en los análisis univariante y bivariante, y se presentan con rigor académico:
+
+#### 1. Concentración Extrema del Rendimiento Ofensivo (Asimetría y Outliners)
+
+-   El análisis univariante (Sección 3.2.4) de Goles (Gls) y Asistencias (Ast) reveló una asimetría positiva elevada (Asimetría \> 4.0), confirmada por los Boxplots que muestran numerosos outliers. Este patrón indica que la producción ofensiva de élite está altamente concentrada en un pequeño subconjunto de jugadores.
+
+#### 2. Dependencia Lineal Fuerte y Disparidad en la Edad:
+
+-   El análisis de correlación (Sección 4.1.2) muestra una fuerte dependencia lineal entre el Minutos Jugados (Min) y Goles Anotados (Gls) (r≈0.77) y un alto poder predictivo de las métricas esperadas (xG vs. Gls).
+
+-   Sin embargo, el análisis Edad vs. Gls (Sección 4.2.1) sugiere que el pico de la mediana del rendimiento ofensivo se concentra en el rango 25-30 años, lo que implica una ventana de máximo rendimiento.
+
+#### 3. Hetereogeneidad en la Gestión de Plantillas por Equipo:
+
+-   El análisis Min vs. Team (Sección 4.2.3) demostró una clara disparidad en la dispersión (RIQ) de Minutos Jugados. Equipos como Man. United y Chelsea presentan una alta dispersión (caja larga), lo que sugiere una mayor rotación, mientras que otros clubes muestran una baja dispersión y una mediana alta, indicando una mayor dependencia de un núcleo fijo.
+
+### 4.2 Formulación de Preguntas para Inferencia Futura.
+
+Las siguientes preguntas están formuladas como hipótesis estadísticas que requieren métodos de inferencia para su validación formal.
+
+| Patrón Fundamento | Pregunta de Inferencia (Testable) | Técnica de Inferencia Implicada |
+|------------------|----------------------------|---------------------------|
+| **Dependencia lineal fuerte:** Min es un factor dominante de Gls | ¿Son los Minutos Jugados un predictor estadísticamente significativo de los Goles Anotados en un modelo que controla por la Posición? | Modelo de regresión lineal múltiple |
+| **Pico de rendimiento:** Mediana de Gls es mayor en 25-30 años | ¿Existe una diferencia estadísticamente significativa en la mediana de Goles Anotados entre los grupos de edad (15-20 vs. 25-30 vs. 30-35), requiriendo un test no paramétrico? | Test de Kruskal-Wallis o Test de Wilcoxon |
+| **Rotación de Plantillas:** Disparidad en la dispersión de Min por Equipo | ¿Existe una diferencia estadísticamente significativa en la varianza de los Minutos Jugados (Min) entre los equipos clasificados a la Champions League y el resto de la liga? | Test F o ANOVA |
+| **Composición de Plantilla:** Diferencias en la proporción de Posiciones por Equipo | ¿Existe una asociación estadísticamente significativa entre la Posición del jugador y el Equipo al que pertenece? | Test Chi-cuadrado de independencia |
+
+## 5. Conclusiones del Análisis Exploratorio de Datos (EDA).
+
+El Análisis Exploratorio de Datos ha cumplido su objetivo de describir la estructura, asegurar la calidad de los datos y generar hipótesis válidas, proporcionando una base sólida para la Inferencia Estadística.
+
+### 5.1 Resumen de Hallazgos Clave.
+
+- **Dominio de la Asimetría**: La característica estadística dominante es la asimetría positiva extrema en casi todas las variables de rendimiento (Gls, Ast, xG), lo que reitera que el rendimiento en la Premier League se concentra en una minoría de jugadores.
+
+- **Fundamento para el Modelado**: La fuerte correlación lineal observada entre las métricas totales (Min, Gls, Ast) justifica el uso de estas variables como predictores en futuros modelos de regresión.
+
+- **Estrategias Tácticas**: Se identificó una clara heterogeneidad en la gestión de la plantilla a través del análisis Min vs. Team, lo cual es un hallazgo clave que refleja diferentes estrategias tácticas (núcleo fijo vs. rotación) entre los clubes.
+
+### 5.2 Implicaciones para Análisis Futuros.
+
+Este análisis es puramente descriptivo; las relaciones identificadas no implican causalidad. La principal limitación es la ausencia de variables cruciales como el Salario o la Clasificación Final del Equipo, que son necesarias para medir el impacto financiero y deportivo del rendimiento. Estas limitaciones deben abordarse en estudios futuros para obtener una comprensión más completa del rendimiento en la Premier League.
 
