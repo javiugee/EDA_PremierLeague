@@ -12,6 +12,7 @@ format:
     toc: true
     toc_depth: 3
     theme: cosmo
+    self_contained: true
 categories:
   - Inferencia Estadística
   - Grado en Ciencia e Ingenieria de Datos
