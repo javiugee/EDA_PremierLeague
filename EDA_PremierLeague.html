@@ -1,0 +1,2347 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Javier Ugena García">
+<meta name="author" content="Gabriel Carlos Suárez Chiquito">
+<meta name="author" content="Bruno Guedeja-Marrón Ramos">
+
+<title>Análisis Exploratorio de Datos de la Premier League 2021/2022</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="EDA_PremierLeague_files/libs/clipboard/clipboard.min.js"></script>
+<script src="EDA_PremierLeague_files/libs/quarto-html/quarto.js"></script>
+<script src="EDA_PremierLeague_files/libs/quarto-html/popper.min.js"></script>
+<script src="EDA_PremierLeague_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="EDA_PremierLeague_files/libs/quarto-html/anchor.min.js"></script>
+<link href="EDA_PremierLeague_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="EDA_PremierLeague_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="EDA_PremierLeague_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="EDA_PremierLeague_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="EDA_PremierLeague_files/libs/bootstrap/bootstrap-d2968f99b985b9db580b8394b636680d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#introducción-y-objetivos." id="toc-introducción-y-objetivos." class="nav-link active" data-scroll-target="#introducción-y-objetivos.">1. Introducción y Objetivos.</a></li>
+  <li><a href="#presentación-y-descripción-del-dataset." id="toc-presentación-y-descripción-del-dataset." class="nav-link" data-scroll-target="#presentación-y-descripción-del-dataset.">2. Presentación y Descripción del Dataset.</a>
+  <ul class="collapse">
+  <li><a href="#contexto-y-origen-de-los-datos." id="toc-contexto-y-origen-de-los-datos." class="nav-link" data-scroll-target="#contexto-y-origen-de-los-datos.">2.1. Contexto y Origen de los Datos.</a></li>
+  <li><a href="#carga-y-dimensiones-del-dataset." id="toc-carga-y-dimensiones-del-dataset." class="nav-link" data-scroll-target="#carga-y-dimensiones-del-dataset.">2.2. Carga y Dimensiones del Dataset.</a></li>
+  <li><a href="#descripción-detallada-de-las-variables." id="toc-descripción-detallada-de-las-variables." class="nav-link" data-scroll-target="#descripción-detallada-de-las-variables.">2.3. Descripción Detallada de las Variables.</a></li>
+  </ul></li>
+  <li><a href="#análisis-univariante-y-calidad-de-datos." id="toc-análisis-univariante-y-calidad-de-datos." class="nav-link" data-scroll-target="#análisis-univariante-y-calidad-de-datos.">3. Análisis Univariante y Calidad de Datos.</a>
+  <ul class="collapse">
+  <li><a href="#detección-y-tratamiento-de-problemas-de-calidad." id="toc-detección-y-tratamiento-de-problemas-de-calidad." class="nav-link" data-scroll-target="#detección-y-tratamiento-de-problemas-de-calidad.">3.1. Detección y Tratamiento de Problemas de Calidad.</a></li>
+  <li><a href="#análisis-descriptivo-completo-de-variables-numéricas-importantes." id="toc-análisis-descriptivo-completo-de-variables-numéricas-importantes." class="nav-link" data-scroll-target="#análisis-descriptivo-completo-de-variables-numéricas-importantes.">3.2. Análisis Descriptivo completo de variables numéricas importantes.</a></li>
+  <li><a href="#análisis-descriptivo-de-variables-numéricas-restantes." id="toc-análisis-descriptivo-de-variables-numéricas-restantes." class="nav-link" data-scroll-target="#análisis-descriptivo-de-variables-numéricas-restantes.">3.3. Análisis Descriptivo de Variables numéricas restantes.</a></li>
+  <li><a href="#análisis-descriptivo-de-variables-categóricas." id="toc-análisis-descriptivo-de-variables-categóricas." class="nav-link" data-scroll-target="#análisis-descriptivo-de-variables-categóricas.">3.4. Análisis Descriptivo de Variables Categóricas.</a></li>
+  </ul></li>
+  <li><a href="#análisis-bivariante." id="toc-análisis-bivariante." class="nav-link" data-scroll-target="#análisis-bivariante.">4. Análisis Bivariante.</a>
+  <ul class="collapse">
+  <li><a href="#análisis-de-correlación-entre-variables-numéricas." id="toc-análisis-de-correlación-entre-variables-numéricas." class="nav-link" data-scroll-target="#análisis-de-correlación-entre-variables-numéricas.">4.1. Análisis de Correlación entre Variables Numéricas.</a></li>
+  <li><a href="#análisis-bivariante-entre-variables-categóricas-y-numéricas." id="toc-análisis-bivariante-entre-variables-categóricas-y-numéricas." class="nav-link" data-scroll-target="#análisis-bivariante-entre-variables-categóricas-y-numéricas.">4.2. Análisis Bivariante entre Variables Categóricas y Numéricas.</a></li>
+  <li><a href="#análisis-bivariante-de-variables-categóricas." id="toc-análisis-bivariante-de-variables-categóricas." class="nav-link" data-scroll-target="#análisis-bivariante-de-variables-categóricas.">Análisis Bivariante de Variables Categóricas.</a></li>
+  </ul></li>
+  <li><a href="#identificación-de-patrones-y-formulación-de-preguntas." id="toc-identificación-de-patrones-y-formulación-de-preguntas." class="nav-link" data-scroll-target="#identificación-de-patrones-y-formulación-de-preguntas.">4. Identificación de Patrones y Formulación de Preguntas.</a>
+  <ul class="collapse">
+  <li><a href="#identificación-y-descripción-de-los-patrones-principales." id="toc-identificación-y-descripción-de-los-patrones-principales." class="nav-link" data-scroll-target="#identificación-y-descripción-de-los-patrones-principales.">4.1 Identificación y Descripción de los Patrones principales.</a></li>
+  <li><a href="#formulación-de-preguntas-para-inferencia-futura." id="toc-formulación-de-preguntas-para-inferencia-futura." class="nav-link" data-scroll-target="#formulación-de-preguntas-para-inferencia-futura.">4.2 Formulación de Preguntas para Inferencia Futura.</a></li>
+  </ul></li>
+  <li><a href="#conclusiones-del-análisis-exploratorio-de-datos-eda." id="toc-conclusiones-del-análisis-exploratorio-de-datos-eda." class="nav-link" data-scroll-target="#conclusiones-del-análisis-exploratorio-de-datos-eda.">5. Conclusiones del Análisis Exploratorio de Datos (EDA).</a>
+  <ul class="collapse">
+  <li><a href="#resumen-de-hallazgos-clave." id="toc-resumen-de-hallazgos-clave." class="nav-link" data-scroll-target="#resumen-de-hallazgos-clave.">5.1 Resumen de Hallazgos Clave.</a></li>
+  <li><a href="#implicaciones-para-análisis-futuros." id="toc-implicaciones-para-análisis-futuros." class="nav-link" data-scroll-target="#implicaciones-para-análisis-futuros.">5.2 Implicaciones para Análisis Futuros.</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Análisis Exploratorio de Datos de la Premier League 2021/2022</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Inferencia Estadística</div>
+    <div class="quarto-category">Grado en Ciencia e Ingenieria de Datos</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Autores/as</div>
+    <div class="quarto-title-meta-contents">
+             <p>Javier Ugena García </p>
+             <p>Gabriel Carlos Suárez Chiquito </p>
+             <p>Bruno Guedeja-Marrón Ramos </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Fecha de publicación</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2 de noviembre de 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introducción-y-objetivos." class="level2">
+<h2 class="anchored" data-anchor-id="introducción-y-objetivos.">1. Introducción y Objetivos.</h2>
+<p>Esta práctica marca el primer contacto real con un Análisis Exploratorio de Datos (EDA) completo y sistemático , el cual es una fase fundamental en la ciencia de datos.</p>
+<p>El objetivo principal de este informe es aplicar técnicas de estadística descriptiva y visualización en el dataset de la Premier League para comprender en profundidad su estructura, identificar patrones, detectar anomalías, y finalmente, formular hipótesis que serán validadas en futuras etapas de inferencia estadística.</p>
+</section>
+<section id="presentación-y-descripción-del-dataset." class="level2">
+<h2 class="anchored" data-anchor-id="presentación-y-descripción-del-dataset.">2. Presentación y Descripción del Dataset.</h2>
+<section id="contexto-y-origen-de-los-datos." class="level3">
+<h3 class="anchored" data-anchor-id="contexto-y-origen-de-los-datos.">2.1. Contexto y Origen de los Datos.</h3>
+<p>El conjunto de datos utilizado en esta práctica contiene estadísticas detalladas de jugadores de la Premier League (la máxima división de fútbol en Inglaterra) correspondientes a la temporada 2021/2022.</p>
+<p>Estos datos buscan describir el rendimiento deportivo y las características demográficas de los jugadores en la competición. Su origen es Kaggle y han sido recopilados con el fin de analizar variables clave como el número de goles, minutos jugados, pases realizados, y la posición de los jugadores.</p>
+</section>
+<section id="carga-y-dimensiones-del-dataset." class="level3">
+<h3 class="anchored" data-anchor-id="carga-y-dimensiones-del-dataset.">2.2. Carga y Dimensiones del Dataset.</h3>
+<p>A continuación, cargamos las librerías necesarias y el conjunto de datos de la Premier League para verificar sus dimensiones (número de observaciones y variables).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(summarytools) </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally) </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(flextable)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr) </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(moments)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"datos/datospremier.csv"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>dimensiones <span class="ot">&lt;-</span> <span class="fu">dim</span>(datos)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(datos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 691
+Columns: 30
+$ Player    &lt;chr&gt; "Bukayo Saka", "Gabriel Dos Santos", "Aaron Ramsdale", "Ben …
+$ Team      &lt;chr&gt; "Arsenal", "Arsenal", "Arsenal", "Arsenal", "Arsenal", "Arse…
+$ Nation    &lt;chr&gt; "eng\xa0ENG", "br\xa0BRA", "eng\xa0ENG", "eng\xa0ENG", "no\x…
+$ Pos       &lt;chr&gt; "FW,MF", "DF", "GK", "DF", "MF", "MF,DF", "MF", "DF", "MF,FW…
+$ Age       &lt;int&gt; 19, 23, 23, 23, 22, 28, 28, 24, 21, 20, 30, 22, 29, 21, 21, …
+$ MP        &lt;int&gt; 38, 35, 34, 32, 36, 27, 24, 22, 33, 29, 30, 21, 21, 22, 19, …
+$ Starts    &lt;int&gt; 36, 35, 34, 32, 32, 27, 23, 22, 21, 21, 20, 20, 16, 13, 12, …
+$ Min       &lt;chr&gt; "2,978", "3,063", "3,060", "2,880", "2,785", "2,327", "2,028…
+$ X90s      &lt;dbl&gt; 33.1, 34.0, 34.0, 32.0, 30.9, 25.9, 22.5, 21.3, 21.3, 20.7, …
+$ Gls       &lt;int&gt; 11, 5, 0, 0, 7, 1, 2, 1, 10, 6, 4, 0, 1, 1, 0, 4, 1, 5, 0, 1…
+$ Ast       &lt;int&gt; 7, 0, 0, 0, 4, 2, 1, 3, 2, 6, 7, 1, 1, 1, 0, 1, 0, 1, 2, 2, …
+$ G.PK      &lt;int&gt; 9, 5, 0, 0, 7, 1, 2, 1, 10, 5, 2, 0, 1, 1, 0, 4, 1, 5, 0, 1,…
+$ PK        &lt;int&gt; 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ PKatt     &lt;int&gt; 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 2, 0, 0, 0, 0, …
+$ CrdY      &lt;int&gt; 6, 8, 1, 3, 4, 10, 6, 0, 1, 3, 0, 2, 3, 2, 5, 3, 4, 3, 1, 0,…
+$ CrdR      &lt;int&gt; 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, …
+$ Gls.1     &lt;dbl&gt; 0.33, 0.15, 0.00, 0.00, 0.23, 0.04, 0.09, 0.05, 0.47, 0.29, …
+$ Ast.1     &lt;dbl&gt; 0.21, 0.00, 0.00, 0.00, 0.13, 0.08, 0.04, 0.14, 0.09, 0.29, …
+$ G.A       &lt;dbl&gt; 0.54, 0.15, 0.00, 0.00, 0.36, 0.12, 0.13, 0.19, 0.56, 0.58, …
+$ G.PK.1    &lt;dbl&gt; 0.27, 0.15, 0.00, 0.00, 0.23, 0.04, 0.09, 0.05, 0.47, 0.24, …
+$ G.A.PK    &lt;dbl&gt; 0.48, 0.15, 0.00, 0.00, 0.36, 0.12, 0.13, 0.19, 0.56, 0.53, …
+$ xG        &lt;dbl&gt; 9.7, 2.7, 0.0, 1.0, 4.8, 1.2, 2.5, 0.7, 5.8, 7.2, 7.9, 0.8, …
+$ npxG      &lt;dbl&gt; 8.2, 2.7, 0.0, 1.0, 4.8, 1.2, 2.5, 0.7, 5.8, 6.5, 5.6, 0.8, …
+$ xA        &lt;dbl&gt; 6.9, 0.8, 0.0, 0.6, 6.8, 2.3, 1.3, 1.9, 2.2, 3.3, 1.9, 0.6, …
+$ npxG.xA   &lt;dbl&gt; 15.2, 3.5, 0.0, 1.6, 11.6, 3.5, 3.8, 2.6, 8.0, 9.8, 7.6, 1.4…
+$ xG.1      &lt;dbl&gt; 0.29, 0.08, 0.00, 0.03, 0.16, 0.05, 0.11, 0.03, 0.27, 0.35, …
+$ xA.1      &lt;dbl&gt; 0.21, 0.02, 0.00, 0.02, 0.22, 0.09, 0.06, 0.09, 0.10, 0.16, …
+$ xG.xA     &lt;dbl&gt; 0.50, 0.10, 0.00, 0.05, 0.38, 0.14, 0.17, 0.12, 0.37, 0.51, …
+$ npxG.1    &lt;dbl&gt; 0.25, 0.08, 0.00, 0.03, 0.16, 0.05, 0.11, 0.03, 0.27, 0.31, …
+$ npxG.xA.1 &lt;dbl&gt; 0.46, 0.10, 0.00, 0.05, 0.38, 0.14, 0.17, 0.12, 0.37, 0.47, …</code></pre>
+</div>
+</div>
+</section>
+<section id="descripción-detallada-de-las-variables." class="level3">
+<h3 class="anchored" data-anchor-id="descripción-detallada-de-las-variables.">2.3. Descripción Detallada de las Variables.</h3>
+<p>A continuación, se presenta una tabla que detalla cada variable del dataset, incluyendo su tipo estadístico, significado y unidades de medida. Esta descripción es crucial para un análisis riguroso.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Tipo Estadístico</th>
+<th>Descripción</th>
+<th>Unidades de Medida</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Player</td>
+<td>Categórica</td>
+<td>Nombre del jugador</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Team</td>
+<td>Categórica</td>
+<td>Nombre del equipo</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td>Nation</td>
+<td>Categórica</td>
+<td>Nacionalidad del jugador</td>
+<td>N/A</td>
+</tr>
+<tr class="even">
+<td>Pos</td>
+<td>Categórica</td>
+<td>Posición del jugador</td>
+<td>N/A</td>
+</tr>
+<tr class="odd">
+<td>Age</td>
+<td>Numérica</td>
+<td>Edad del jugador</td>
+<td>Años</td>
+</tr>
+<tr class="even">
+<td>MP</td>
+<td>Numérica</td>
+<td>Partidos jugados</td>
+<td>Minutos</td>
+</tr>
+<tr class="odd">
+<td>Starts</td>
+<td>Numérica</td>
+<td>Partidos iniciados de titular</td>
+<td>Cantidad de partidos</td>
+</tr>
+<tr class="even">
+<td>Min</td>
+<td>Numérica</td>
+<td>Minutos jugados</td>
+<td>Minutos</td>
+</tr>
+<tr class="odd">
+<td>X90s</td>
+<td>Numérica</td>
+<td>Minutos jugados dividido por 90 minutos</td>
+<td>Cantidad de partidos</td>
+</tr>
+<tr class="even">
+<td>Gls</td>
+<td>Numérica</td>
+<td>Goles anotados</td>
+<td>Cantidad de goles</td>
+</tr>
+<tr class="odd">
+<td>Ast</td>
+<td>Numérica</td>
+<td>Asistencias realizadas</td>
+<td>Cantidad de asistencias</td>
+</tr>
+<tr class="even">
+<td>G.PK</td>
+<td>Numérica</td>
+<td>Goles anotados sin contar penaltis</td>
+<td>Cantidad de goles</td>
+</tr>
+<tr class="odd">
+<td>PK</td>
+<td>Numérica</td>
+<td>Penaltis anotados</td>
+<td>Cantidad de penaltis</td>
+</tr>
+<tr class="even">
+<td>PKatt</td>
+<td>Numérica</td>
+<td>Penaltis intentados</td>
+<td>Cantidad de penaltis</td>
+</tr>
+<tr class="odd">
+<td>CrdY</td>
+<td>Numérica</td>
+<td>Tarjetas amarillas</td>
+<td>Cantidad de tarjetas</td>
+</tr>
+<tr class="even">
+<td>CrdR</td>
+<td>Numérica</td>
+<td>Tarjetas rojas</td>
+<td>Cantidad de tarjetas</td>
+</tr>
+<tr class="odd">
+<td>Gls.1</td>
+<td>Numérica</td>
+<td>Goles anotados por 90 minutos</td>
+<td>Goles por 90 minutos</td>
+</tr>
+<tr class="even">
+<td>Ast.1</td>
+<td>Numérica</td>
+<td>Asistencias por 90 minutos</td>
+<td>Asistencias por 90 minutos</td>
+</tr>
+<tr class="odd">
+<td>G.A</td>
+<td>Numérica</td>
+<td>Goles + Asistencias</td>
+<td>Cantidad total</td>
+</tr>
+<tr class="even">
+<td>G.PK.1</td>
+<td>Numérica</td>
+<td>Goles sin contar penaltis</td>
+<td>Cantidad total</td>
+</tr>
+<tr class="odd">
+<td>G.A.PK</td>
+<td>Numérica</td>
+<td>Goles + Asistencias sin contar penaltis</td>
+<td>Cantidad total</td>
+</tr>
+<tr class="even">
+<td>xG</td>
+<td>Numérica</td>
+<td>Goles esperados</td>
+<td>Cantidad de goles</td>
+</tr>
+<tr class="odd">
+<td>npxG</td>
+<td>Numérica</td>
+<td>Goles esperados sin contar penaltis</td>
+<td>Cantidad de goles</td>
+</tr>
+<tr class="even">
+<td>xA</td>
+<td>Numérica</td>
+<td>Asistencias esperadas</td>
+<td>Cantidad de asistencias</td>
+</tr>
+<tr class="odd">
+<td>npxG.xA</td>
+<td>Numérica</td>
+<td>Goles esperados + Asistencias esperadas sin contar penaltis</td>
+<td>Cantidad total</td>
+</tr>
+<tr class="even">
+<td>xG.1</td>
+<td>Numérica</td>
+<td>Goles esperados por 90 minutos</td>
+<td>Goles por 90 minutos</td>
+</tr>
+<tr class="odd">
+<td>xA.1</td>
+<td>Numérica</td>
+<td>Asistencias esperadas por 90 minutos</td>
+<td>Asistencias por 90 minutos</td>
+</tr>
+<tr class="even">
+<td>xG.xA</td>
+<td>Numérica</td>
+<td>Goles esperados + Asistencias esperadas</td>
+<td>Cantidad total</td>
+</tr>
+<tr class="odd">
+<td>np.xG.1</td>
+<td>Numérica</td>
+<td>Goles esperados sin contar penaltis por 90 minutos</td>
+<td>Goles por 90 minutos</td>
+</tr>
+<tr class="even">
+<td>np.xG.xA.1</td>
+<td>Numérica</td>
+<td>Goles esperados + Asistencias esperadas sin contar penaltis por 90 minutos</td>
+<td>Cantidad total</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="análisis-univariante-y-calidad-de-datos." class="level2">
+<h2 class="anchored" data-anchor-id="análisis-univariante-y-calidad-de-datos.">3. Análisis Univariante y Calidad de Datos.</h2>
+<p>El Análisis Univariante se centra en describir cada variable de forma aislada para comprender su distribución y detectar posibles problemas en los datos.</p>
+<section id="detección-y-tratamiento-de-problemas-de-calidad." class="level3">
+<h3 class="anchored" data-anchor-id="detección-y-tratamiento-de-problemas-de-calidad.">3.1. Detección y Tratamiento de Problemas de Calidad.</h3>
+<section id="correción-de-detalles-en-los-datos." class="level4">
+<h4 class="anchored" data-anchor-id="correción-de-detalles-en-los-datos.">3.1.1. Correción de detalles en los datos.</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(datos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   691 obs. of  30 variables:
+ $ Player   : chr  "Bukayo Saka" "Gabriel Dos Santos" "Aaron Ramsdale" "Ben White" ...
+ $ Team     : chr  "Arsenal" "Arsenal" "Arsenal" "Arsenal" ...
+ $ Nation   : chr  "eng\xa0ENG" "br\xa0BRA" "eng\xa0ENG" "eng\xa0ENG" ...
+ $ Pos      : chr  "FW,MF" "DF" "GK" "DF" ...
+ $ Age      : int  19 23 23 23 22 28 28 24 21 20 ...
+ $ MP       : int  38 35 34 32 36 27 24 22 33 29 ...
+ $ Starts   : int  36 35 34 32 32 27 23 22 21 21 ...
+ $ Min      : chr  "2,978" "3,063" "3,060" "2,880" ...
+ $ X90s     : num  33.1 34 34 32 30.9 25.9 22.5 21.3 21.3 20.7 ...
+ $ Gls      : int  11 5 0 0 7 1 2 1 10 6 ...
+ $ Ast      : int  7 0 0 0 4 2 1 3 2 6 ...
+ $ G.PK     : int  9 5 0 0 7 1 2 1 10 5 ...
+ $ PK       : int  2 0 0 0 0 0 0 0 0 1 ...
+ $ PKatt    : int  2 0 0 0 0 0 0 0 0 1 ...
+ $ CrdY     : int  6 8 1 3 4 10 6 0 1 3 ...
+ $ CrdR     : int  0 1 0 0 0 1 0 0 0 1 ...
+ $ Gls.1    : num  0.33 0.15 0 0 0.23 0.04 0.09 0.05 0.47 0.29 ...
+ $ Ast.1    : num  0.21 0 0 0 0.13 0.08 0.04 0.14 0.09 0.29 ...
+ $ G.A      : num  0.54 0.15 0 0 0.36 0.12 0.13 0.19 0.56 0.58 ...
+ $ G.PK.1   : num  0.27 0.15 0 0 0.23 0.04 0.09 0.05 0.47 0.24 ...
+ $ G.A.PK   : num  0.48 0.15 0 0 0.36 0.12 0.13 0.19 0.56 0.53 ...
+ $ xG       : num  9.7 2.7 0 1 4.8 1.2 2.5 0.7 5.8 7.2 ...
+ $ npxG     : num  8.2 2.7 0 1 4.8 1.2 2.5 0.7 5.8 6.5 ...
+ $ xA       : num  6.9 0.8 0 0.6 6.8 2.3 1.3 1.9 2.2 3.3 ...
+ $ npxG.xA  : num  15.2 3.5 0 1.6 11.6 3.5 3.8 2.6 8 9.8 ...
+ $ xG.1     : num  0.29 0.08 0 0.03 0.16 0.05 0.11 0.03 0.27 0.35 ...
+ $ xA.1     : num  0.21 0.02 0 0.02 0.22 0.09 0.06 0.09 0.1 0.16 ...
+ $ xG.xA    : num  0.5 0.1 0 0.05 0.38 0.14 0.17 0.12 0.37 0.51 ...
+ $ npxG.1   : num  0.25 0.08 0 0.03 0.16 0.05 0.11 0.03 0.27 0.31 ...
+ $ npxG.xA.1: num  0.46 0.1 0 0.05 0.38 0.14 0.17 0.12 0.37 0.47 ...</code></pre>
+</div>
+</div>
+<p>Viendo la base de datos, hemos detectado que hay variables como por ejemplo “MP” (Minutos Jugados) que tienen “,” para el valor mil. Por lo que hay que eliminar las “,” para que R lo pueda interpretar como numérico y no como carácter. También, podemos observar que la variable “Nation” tiene caracteres especiales. Además, las variables Team, Nation y Pos deberían ser de tipo factor ya que son variables categóricas. La variables “Pos” tiene valores como “FW,MF” que deberían ser “FW” o “MF”, por lo que habría que corregir esos valores.</p>
+<p>Estrategia: Usaremos código R para corregir estos detalles en los datos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir la columna edad que contiene comas a numérica.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Min <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">","</span>,<span class="st">""</span>, datos<span class="sc">$</span>Min))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Corregir la variable Nation</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Nation <span class="ot">&lt;-</span> <span class="fu">iconv</span>(datos<span class="sc">$</span>Nation, <span class="at">from =</span> <span class="st">"latin1"</span>, <span class="at">to =</span> <span class="st">"UTF-8"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Nation <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(datos<span class="sc">$</span>Nation, <span class="st">"[^A-Za-z]"</span>, <span class="st">""</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Convertir las variables categóricas a factor</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Team <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(datos<span class="sc">$</span>Team)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Nation <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(datos<span class="sc">$</span>Nation)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Pos <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(datos<span class="sc">$</span>Pos)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Corregir la variable Pos</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"DF,FW"</span>,<span class="st">"DF"</span>, datos<span class="sc">$</span>Pos)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"DF,MF"</span>,<span class="st">"DF"</span>, datos<span class="sc">$</span>Pos)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"FW,DF"</span>,<span class="st">"FW"</span>, datos<span class="sc">$</span>Pos)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"FW,MF"</span>,<span class="st">"FW"</span>, datos<span class="sc">$</span>Pos)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"MF,DF"</span>,<span class="st">"MF"</span>, datos<span class="sc">$</span>Pos)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Pos <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"MF,FW"</span>,<span class="st">"MF"</span>, datos<span class="sc">$</span>Pos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar que se han corregido los datos numéricos</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(datos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   691 obs. of  30 variables:
+ $ Player   : chr  "Bukayo Saka" "Gabriel Dos Santos" "Aaron Ramsdale" "Ben White" ...
+ $ Team     : Factor w/ 20 levels "Arsenal","Aston Villa",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nation   : Factor w/ 67 levels "","alALB","aoANG",..: 23 9 23 23 46 11 29 53 23 9 ...
+ $ Pos      : chr  "FW" "DF" "GK" "DF" ...
+ $ Age      : int  19 23 23 23 22 28 28 24 21 20 ...
+ $ MP       : int  38 35 34 32 36 27 24 22 33 29 ...
+ $ Starts   : int  36 35 34 32 32 27 23 22 21 21 ...
+ $ Min      : num  2978 3063 3060 2880 2785 ...
+ $ X90s     : num  33.1 34 34 32 30.9 25.9 22.5 21.3 21.3 20.7 ...
+ $ Gls      : int  11 5 0 0 7 1 2 1 10 6 ...
+ $ Ast      : int  7 0 0 0 4 2 1 3 2 6 ...
+ $ G.PK     : int  9 5 0 0 7 1 2 1 10 5 ...
+ $ PK       : int  2 0 0 0 0 0 0 0 0 1 ...
+ $ PKatt    : int  2 0 0 0 0 0 0 0 0 1 ...
+ $ CrdY     : int  6 8 1 3 4 10 6 0 1 3 ...
+ $ CrdR     : int  0 1 0 0 0 1 0 0 0 1 ...
+ $ Gls.1    : num  0.33 0.15 0 0 0.23 0.04 0.09 0.05 0.47 0.29 ...
+ $ Ast.1    : num  0.21 0 0 0 0.13 0.08 0.04 0.14 0.09 0.29 ...
+ $ G.A      : num  0.54 0.15 0 0 0.36 0.12 0.13 0.19 0.56 0.58 ...
+ $ G.PK.1   : num  0.27 0.15 0 0 0.23 0.04 0.09 0.05 0.47 0.24 ...
+ $ G.A.PK   : num  0.48 0.15 0 0 0.36 0.12 0.13 0.19 0.56 0.53 ...
+ $ xG       : num  9.7 2.7 0 1 4.8 1.2 2.5 0.7 5.8 7.2 ...
+ $ npxG     : num  8.2 2.7 0 1 4.8 1.2 2.5 0.7 5.8 6.5 ...
+ $ xA       : num  6.9 0.8 0 0.6 6.8 2.3 1.3 1.9 2.2 3.3 ...
+ $ npxG.xA  : num  15.2 3.5 0 1.6 11.6 3.5 3.8 2.6 8 9.8 ...
+ $ xG.1     : num  0.29 0.08 0 0.03 0.16 0.05 0.11 0.03 0.27 0.35 ...
+ $ xA.1     : num  0.21 0.02 0 0.02 0.22 0.09 0.06 0.09 0.1 0.16 ...
+ $ xG.xA    : num  0.5 0.1 0 0.05 0.38 0.14 0.17 0.12 0.37 0.51 ...
+ $ npxG.1   : num  0.25 0.08 0 0.03 0.16 0.05 0.11 0.03 0.27 0.31 ...
+ $ npxG.xA.1: num  0.46 0.1 0 0.05 0.38 0.14 0.17 0.12 0.37 0.47 ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>vars_numeric <span class="ot">&lt;-</span> <span class="fu">names</span>(datos)[<span class="fu">sapply</span>(datos, is.numeric)]</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>tabla_rangos <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">all_of</span>(vars_numeric),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      Mínimo <span class="ot">=</span> \(x) <span class="fu">min</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      Máximo <span class="ot">=</span> \(x) <span class="fu">max</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">%&gt;%</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"Variable"</span>, <span class="st">".value"</span>),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_sep =</span> <span class="st">"_"</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(tabla_rangos,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Tabla de valores mínimos y máximos de variables numéricas"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Tabla de valores mínimos y máximos de variables numéricas</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: right;">Mínimo</th>
+<th style="text-align: right;">Máximo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Age</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">39.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MP</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">38.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Starts</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">38.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Min</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3420.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">X90s</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">38.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gls</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">23.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ast</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">13.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">G.PK</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">23.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PK</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PKatt</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CrdY</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CrdR</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Gls.1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2.03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ast.1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11.25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">G.A</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">G.PK.1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2.03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">G.A.PK</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">xG</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">21.80</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">npxG</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">17.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">xA</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11.20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">npxG.xA</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">27.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">xG.1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4.48</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">xA.1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6.50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">xG.xA</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">npxG.1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4.48</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">npxG.xA.1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6.50</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Observando la base de datos, hemos tomado la decisión de eliminar algunas variables que no aportan valor al análisis, como por ejemplo las variables que representan métricas por 90 minutos jugados (X90s, G.PK.1, xG.1, xA.1, npxG.1, npxG.xA.1). Estas variables son derivadas de las métricas totales y pueden generar redundancia en el análisis. Además de generar confusión al interpretar los resultados.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar las variables innecesarias</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(X90s, G.PK<span class="fl">.1</span>, xG<span class="fl">.1</span>, xA<span class="fl">.1</span>, npxG<span class="fl">.1</span>, npxG.xA<span class="fl">.1</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>La base de datos ya está corregida y lista para el análisis posterior. Quedaría tal que así:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              Player    Team Nation Pos Age MP Starts  Min Gls Ast G.PK PK
+1        Bukayo Saka Arsenal engENG  FW  19 38     36 2978  11   7    9  2
+2 Gabriel Dos Santos Arsenal  brBRA  DF  23 35     35 3063   5   0    5  0
+3     Aaron Ramsdale Arsenal engENG  GK  23 34     34 3060   0   0    0  0
+4          Ben White Arsenal engENG  DF  23 32     32 2880   0   0    0  0
+5 Martin \xd8degaard Arsenal  noNOR  MF  22 36     32 2785   7   4    7  0
+6       Granit Xhaka Arsenal  chSUI  MF  28 27     27 2327   1   2    1  0
+  PKatt CrdY CrdR Gls.1 Ast.1  G.A G.A.PK  xG npxG  xA npxG.xA xG.xA
+1     2    6    0  0.33  0.21 0.54   0.48 9.7  8.2 6.9    15.2  0.50
+2     0    8    1  0.15  0.00 0.15   0.15 2.7  2.7 0.8     3.5  0.10
+3     0    1    0  0.00  0.00 0.00   0.00 0.0  0.0 0.0     0.0  0.00
+4     0    3    0  0.00  0.00 0.00   0.00 1.0  1.0 0.6     1.6  0.05
+5     0    4    0  0.23  0.13 0.36   0.36 4.8  4.8 6.8    11.6  0.38
+6     0   10    1  0.04  0.08 0.12   0.12 1.2  1.2 2.3     3.5  0.14</code></pre>
+</div>
+</div>
+<p>Con dimensiones:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(datos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 691  24</code></pre>
+</div>
+</div>
+</section>
+<section id="valores-faltantes." class="level4">
+<h4 class="anchored" data-anchor-id="valores-faltantes.">3.1.2. Valores Faltantes.</h4>
+<p>La identificación y el tratamiento de los valores faltantes (NA o similares) es un requisito clave.</p>
+<p>Estrategia: Usaremos código R para inspeccionar qué variables tienen missings y en qué proporción, para luego decidir el tratamiento.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Contar el total de valores faltantes por columna</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>missings_por_columna <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_all</span>(<span class="sc">~</span><span class="fu">sum</span>(<span class="fu">is.na</span>(.))) <span class="sc">%&gt;%</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(), <span class="at">names_to =</span> <span class="st">"Variable"</span>, <span class="at">values_to =</span> <span class="st">"N_Faltantes"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(N_Faltantes <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Proporcion =</span> N_Faltantes <span class="sc">/</span> <span class="fu">nrow</span>(datos) <span class="sc">*</span> <span class="dv">100</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(missings_por_columna)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 18 × 3
+   Variable N_Faltantes Proporcion
+   &lt;chr&gt;          &lt;int&gt;      &lt;dbl&gt;
+ 1 Age                4      0.579
+ 2 Min              145     21.0  
+ 3 Gls              144     20.8  
+ 4 Ast              144     20.8  
+ 5 G.PK             144     20.8  
+ 6 PK               144     20.8  
+ 7 PKatt            144     20.8  
+ 8 CrdY             144     20.8  
+ 9 CrdR             144     20.8  
+10 Gls.1            145     21.0  
+11 Ast.1            145     21.0  
+12 G.A              145     21.0  
+13 G.A.PK           145     21.0  
+14 xG               145     21.0  
+15 npxG             145     21.0  
+16 xA               145     21.0  
+17 npxG.xA          145     21.0  
+18 xG.xA            145     21.0  </code></pre>
+</div>
+</div>
+<p>Analizando todos los missing values. Hemos detectado que hay 4 jugadores sin edad registrada. Los 144/145 valores faltantes en las demás columnas, se deben a que son jugadores que no han disputado minutos en la temporada, por lo que no tienen datos asociados a rendimiento.</p>
+<p>Revisando cuidadosamente el dataset, hemos decidido que excepto los 4 valores de la edad, vamos a cambiar los valores faltantes detectados como N/A a 0. Ya que son variables numéricas.</p>
+<p>Con los valores faltantes de edad, vamos a cambiar la edad por la mediana de edad de los jugadores para no perder esas observaciones y no alterar la distribución de la variable.</p>
+<p>Estrategia: Usaremos código R para realizar estos tratamientos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Reemplazar los valores faltantes en variables numéricas excepto edad por 0</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>vars_numericas <span class="ot">&lt;-</span> <span class="fu">names</span>(datos)[<span class="fu">sapply</span>(datos, is.numeric) <span class="sc">&amp;</span> <span class="fu">names</span>(datos) <span class="sc">!=</span> <span class="st">"Age"</span>]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (var <span class="cf">in</span> vars_numericas) {</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  datos[[var]][<span class="fu">is.na</span>(datos[[var]])] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Reemplazar los valores faltantes en la variable 'Age' por la mediana</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>mediana_edad <span class="ot">&lt;-</span> <span class="fu">median</span>(datos<span class="sc">$</span>Age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Age[<span class="fu">is.na</span>(datos<span class="sc">$</span>Age)] <span class="ot">&lt;-</span> mediana_edad</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar que no hay más valores faltantes</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(datos))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Player    Team  Nation     Pos     Age      MP  Starts     Min     Gls     Ast 
+      0       0       0       0       0       0       0       0       0       0 
+   G.PK      PK   PKatt    CrdY    CrdR   Gls.1   Ast.1     G.A  G.A.PK      xG 
+      0       0       0       0       0       0       0       0       0       0 
+   npxG      xA npxG.xA   xG.xA 
+      0       0       0       0 </code></pre>
+</div>
+</div>
+</section>
+<section id="detección-y-tratamiento-de-duplicados." class="level4">
+<h4 class="anchored" data-anchor-id="detección-y-tratamiento-de-duplicados.">3.1.3. Detección y Tratamiento de Duplicados.</h4>
+<p>Comprobaremos si existen filas duplicadas en el dataset y tomaremos las medidas necesarias para tratarlas.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar duplicados</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>duplicados <span class="ot">&lt;-</span> datos[<span class="fu">duplicated</span>(datos), ]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(duplicados)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] Player  Team    Nation  Pos     Age     MP      Starts  Min     Gls    
+[10] Ast     G.PK    PK      PKatt   CrdY    CrdR    Gls.1   Ast.1   G.A    
+[19] G.A.PK  xG      npxG    xA      npxG.xA xG.xA  
+&lt;0 rows&gt; (o 0- extensión row.names)</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="análisis-descriptivo-completo-de-variables-numéricas-importantes." class="level3">
+<h3 class="anchored" data-anchor-id="análisis-descriptivo-completo-de-variables-numéricas-importantes.">3.2. Análisis Descriptivo completo de variables numéricas importantes.</h3>
+<p>Para las variables más comunes es necesario realizar un análisis descriptivo completo, que incluya tanto estadísticos como visualizaciones.</p>
+<section id="análisis-descriptivo-de-la-variable-age-edad-del-jugador." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-descriptivo-de-la-variable-age-edad-del-jugador.">3.2.1 Análisis Descriptivo de la variable Age (Edad del jugador).</h4>
+<section id="a.-cálculo-de-estadísticos-descriptivos." class="level5">
+<h5 class="anchored" data-anchor-id="a.-cálculo-de-estadísticos-descriptivos.">A. Cálculo de Estadísticos Descriptivos.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>stats_age <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Age)) <span class="sc">%&gt;%</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">N_Total =</span> <span class="fu">n</span>(),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Media =</span> <span class="fu">mean</span>(Age),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mediana =</span> <span class="fu">median</span>(Age),</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Desviacion_Tipica =</span> <span class="fu">sd</span>(Age),</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">RIQ =</span> <span class="fu">IQR</span>(Age),</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Asimetria =</span> moments<span class="sc">::</span><span class="fu">skewness</span>(Age),</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Curtosis =</span> moments<span class="sc">::</span><span class="fu">kurtosis</span>(Age)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(stats_age)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  N_Total   Media Mediana Desviacion_Tipica RIQ Asimetria Curtosis
+1     691 24.4877      24          4.886338   8 0.2930897 2.340866</code></pre>
+</div>
+</div>
+<p>La variable Age (Edad del jugador) presenta una distribución relativamente simétrica, con una media y mediana cercanas. La desviación típica indica una variabilidad moderada en las edades de los jugadores.</p>
+</section>
+<section id="b.-visualizaciones." class="level5">
+<h5 class="anchored" data-anchor-id="b.-visualizaciones.">B. Visualizaciones.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">4</span>))  <span class="co"># Configurar para 3 gráficos en una fila</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(datos<span class="sc">$</span>Age,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Histograma"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Edad"</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"black"</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(datos<span class="sc">$</span>Age,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Boxplot"</span>,</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Edad"</span>,</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightgreen"</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de Densidad</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(datos<span class="sc">$</span>Age),</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Gráfico de Densidad"</span>,</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Edad"</span>,</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"purple"</span>,</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># Restaurar configuración</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>En el histograma, podemos observar que la mayoría de los jugadores tienen edades comprendidas entre los 20 y 30 años, con una disminución gradual en la frecuencia a medida que aumenta la edad. El boxplot muestra algunos valores atípicos en el extremo superior, indicando que hay jugadores significativamente mayores que la mayoría. El gráfico de densidad sugiere una distribución aproximadamente normal, con un ligero sesgo hacia la derecha.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(datos<span class="sc">$</span>Age); <span class="fu">qqline</span>(datos<span class="sc">$</span>Age, <span class="at">col =</span> <span class="st">"red"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Podemos observar que la mayoría de los puntos se alinean razonablemente bien con la línea diagonal roja, especialmente en la parte central de la distribución. Esto indica que la variable Age presenta una forma aproximadamente normal en su zona media.</p>
+<p>Sin embargo, se aprecia una ligera desviación en los extremos (colas izquierda y derecha), donde los puntos se alejan de la línea. Esto sugiere la presencia de ligera asimetría y valores atípicos en edades muy bajas o muy altas, lo que concuerda con lo observado en el histograma y el boxplot</p>
+</section>
+</section>
+<section id="análisis-descriptivo-de-la-variable-mp-partidos-jugados." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-descriptivo-de-la-variable-mp-partidos-jugados.">3.2.2 Análisis Descriptivo de la variable MP (Partidos jugados).</h4>
+<section id="a.-cálculo-de-estadísticos-descriptivos.-1" class="level5">
+<h5 class="anchored" data-anchor-id="a.-cálculo-de-estadísticos-descriptivos.-1">A. Cálculo de Estadísticos Descriptivos.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>stats_mp <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(MP)) <span class="sc">%&gt;%</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">N_Total =</span> <span class="fu">n</span>(),</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Media =</span> <span class="fu">mean</span>(MP),</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mediana =</span> <span class="fu">median</span>(MP),</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Desviacion_Tipica =</span> <span class="fu">sd</span>(MP),</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">RIQ =</span> <span class="fu">IQR</span>(MP),</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Asimetria =</span> moments<span class="sc">::</span><span class="fu">skewness</span>(MP),</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Curtosis =</span> moments<span class="sc">::</span><span class="fu">kurtosis</span>(MP)</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(stats_mp)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  N_Total    Media Mediana Desviacion_Tipica RIQ Asimetria Curtosis
+1     691 15.17366      14          12.95495  27 0.2001996 1.550917</code></pre>
+</div>
+</div>
+<p>La variable MP (Partidos jugados) muestra una distribución asimétrica positiva, con una media mayor que la mediana. Esto sugiere que hay algunos jugadores que han jugado un número muy alto de partidos, lo que está influyendo en la media. La desviación típica es alta, indicando una gran variabilidad en los partidos jugados por los jugadores.</p>
+</section>
+<section id="b.-visualizaciones.-1" class="level5">
+<h5 class="anchored" data-anchor-id="b.-visualizaciones.-1">B. Visualizaciones.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))  <span class="co"># Configurar para 3 gráficos en una fila</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(datos<span class="sc">$</span>MP,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Histograma"</span>,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Partidos Jugados"</span>,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"black"</span>)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(datos<span class="sc">$</span>MP,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Boxplot"</span>,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Partidos Jugados"</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightgreen"</span>)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de Densidad</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(datos<span class="sc">$</span>MP),</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Gráfico de Densidad"</span>,</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Partidos Jugados"</span>,</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"purple"</span>,</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># Restaurar configuración</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="análisis-descriptivo-de-la-variable-min-minutos-jugados." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-descriptivo-de-la-variable-min-minutos-jugados.">3.2.3 Análisis Descriptivo de la variable Min (Minutos jugados).</h4>
+<section id="a.-cálculo-de-estadísticos-descriptivos.-2" class="level5">
+<h5 class="anchored" data-anchor-id="a.-cálculo-de-estadísticos-descriptivos.-2">A. Cálculo de Estadísticos Descriptivos.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>stats_minutes <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Min)) <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">N_Total =</span> <span class="fu">n</span>(),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Media =</span> <span class="fu">mean</span>(Min),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mediana =</span> <span class="fu">median</span>(Min),</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Desviacion_Tipica =</span> <span class="fu">sd</span>(Min),</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">RIQ =</span> <span class="fu">IQR</span>(Min),</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Asimetria =</span> moments<span class="sc">::</span><span class="fu">skewness</span>(Min),</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Curtosis =</span> moments<span class="sc">::</span><span class="fu">kurtosis</span>(Min)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(stats_minutes)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  N_Total    Media Mediana Desviacion_Tipica  RIQ Asimetria Curtosis
+1     691 1086.994     853          1060.336 1899 0.5654423 1.997267</code></pre>
+</div>
+</div>
+<p>La variable Min (Minutos jugados) muestra una distribución asimétrica positiva, con una media mayor que la mediana. Esto sugiere que hay algunos jugadores que han jugado un número muy alto de minutos, lo que está influyendo en la media. La desviación típica es alta, indicando una gran variabilidad en los minutos jugados por los jugadores.</p>
+</section>
+<section id="b.-visualizaciones.-2" class="level5">
+<h5 class="anchored" data-anchor-id="b.-visualizaciones.-2">B. Visualizaciones.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))  <span class="co"># Configurar para 3 gráficos en una fila</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(datos<span class="sc">$</span>Min,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Histograma"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Minutos Jugados"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"black"</span>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(datos<span class="sc">$</span>Min,</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Boxplot"</span>,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Minutos Jugados"</span>,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightgreen"</span>)</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de Densidad</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(datos<span class="sc">$</span>Min),</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Gráfico de Densidad"</span>,</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Minutos Jugados"</span>,</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"purple"</span>,</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># Restaurar configuración</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En el histograma, podemos observar que la mayoría de los jugadores han jugado menos de 2000 minutos, con una cola larga hacia la derecha, lo que confirma la asimetría positiva observada en los estadísticos descriptivos. El boxplot muestra varios valores atípicos en el extremo superior, indicando que algunos jugadores han jugado un número excepcionalmente alto de minutos. El gráfico de densidad refuerza la idea de que la distribución está sesgada hacia la derecha.</p>
+</section>
+</section>
+<section id="análisis-descriptivo-de-la-variable-gls-goles-anotados." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-descriptivo-de-la-variable-gls-goles-anotados.">3.2.4 Análisis Descriptivo de la variable Gls (Goles anotados).</h4>
+<section id="a.-cálculo-de-estadísticos-descriptivos.-3" class="level5">
+<h5 class="anchored" data-anchor-id="a.-cálculo-de-estadísticos-descriptivos.-3">A. Cálculo de Estadísticos Descriptivos.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>stats_goals <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Gls)) <span class="sc">%&gt;%</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">N_Total =</span> <span class="fu">n</span>(),</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Media =</span> <span class="fu">mean</span>(Gls),</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mediana =</span> <span class="fu">median</span>(Gls),</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Desviacion_Tipica =</span> <span class="fu">sd</span>(Gls),</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">RIQ =</span> <span class="fu">IQR</span>(Gls),</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Asimetria =</span> moments<span class="sc">::</span><span class="fu">skewness</span>(Gls),</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Curtosis =</span> moments<span class="sc">::</span><span class="fu">kurtosis</span>(Gls)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(stats_goals)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  N_Total    Media Mediana Desviacion_Tipica RIQ Asimetria Curtosis
+1     691 1.500724       0          2.996314   2  3.241737 16.26979</code></pre>
+</div>
+</div>
+<p>A simples vista, la variable Gls (Goles anotados) presenta una distribución asimétrica positiva, con una media mayor que la mediana, lo que indica que hay algunos jugadores con un número muy alto de goles que están influyendo en la media. La desviación típica es relativamente alta, lo que sugiere una gran variabilidad en el número de goles anotados por los jugadores.</p>
+<section id="b.-visualizaciones.-3" class="level6">
+<h6 class="anchored" data-anchor-id="b.-visualizaciones.-3">B. Visualizaciones.</h6>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))  <span class="co"># Configurar para 3 gráficos en una fila</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(datos<span class="sc">$</span>Gls,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Histograma"</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Goles Anotados"</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"black"</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(datos<span class="sc">$</span>Gls,</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Boxplot"</span>,</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Goles Anotados"</span>,</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightgreen"</span>)</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de Densidad</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(datos<span class="sc">$</span>Gls),</span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Gráfico de Densidad"</span>,</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Goles Anotados"</span>,</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"purple"</span>,</span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># Restaurar configuración</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Podemos observar en el histograma que la mayoría de los jugadores anotan pocos goles, con una cola larga hacia la derecha, lo que confirma la asimetría positiva observada en los estadísticos descriptivos. El boxplot muestra varios valores atípicos (outliers) en el extremo superior, indicando que algunos jugadores tienen un rendimiento excepcionalmente alto en términos de goles anotados. El gráfico de densidad refuerza la idea de que la distribución está sesgada hacia la derecha.</p>
+</section>
+</section>
+</section>
+<section id="análisis-descriptivo-de-la-variable-ast-asistencias-realizadas." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-descriptivo-de-la-variable-ast-asistencias-realizadas.">3.2.5 Análisis Descriptivo de la variable Ast (Asistencias realizadas).</h4>
+<section id="a.-cálculo-de-estadísticos-descriptivos.-4" class="level5">
+<h5 class="anchored" data-anchor-id="a.-cálculo-de-estadísticos-descriptivos.-4">A. Cálculo de Estadísticos Descriptivos.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>stats_assists <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Ast)) <span class="sc">%&gt;%</span> </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">N_Total =</span> <span class="fu">n</span>(),</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Media =</span> <span class="fu">mean</span>(Ast),</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Mediana =</span> <span class="fu">median</span>(Ast),</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Desviacion_Tipica =</span> <span class="fu">sd</span>(Ast),</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">RIQ =</span> <span class="fu">IQR</span>(Ast),</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Asimetria =</span> moments<span class="sc">::</span><span class="fu">skewness</span>(Ast),</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Curtosis =</span> moments<span class="sc">::</span><span class="fu">kurtosis</span>(Ast)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(stats_assists)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  N_Total    Media Mediana Desviacion_Tipica RIQ Asimetria Curtosis
+1     691 1.078148       0           1.89499 1.5  2.593532 11.21054</code></pre>
+</div>
+</div>
+<p>La variable Ast (Asistencias realizadas) presenta una distribución asimétrica positiva, con una media mayor que la mediana. Esto sugiere que hay algunos jugadores que han realizado un número muy alto de asistencias, lo que está influyendo en la media. La desviación típica es alta, indicando una gran variabilidad en las asistencias realizadas por los jugadores.</p>
+</section>
+<section id="b.-visualizaciones.-4" class="level5">
+<h5 class="anchored" data-anchor-id="b.-visualizaciones.-4">B. Visualizaciones.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))  <span class="co"># Configurar para 3 gráficos en una fila</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Histograma</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(datos<span class="sc">$</span>Ast,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Histograma"</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Asistencias Realizadas"</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"black"</span>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(datos<span class="sc">$</span>Ast,</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Boxplot"</span>,</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Asistencias Realizadas"</span>,</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightgreen"</span>)</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de Densidad</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(datos<span class="sc">$</span>Ast),</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Gráfico de Densidad"</span>,</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Asistencias Realizadas"</span>,</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"purple"</span>,</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>     <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># Restaurar configuración</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En el histograma, podemos observar que la mayoría de los jugadores han realizado pocas asistencias, con una cola larga hacia la derecha, lo que confirma la asimetría positiva observada en los estadísticos descriptivos. El boxplot muestra varios valores atípicos en el extremo superior, indicando que algunos jugadores han realizado un número excepcionalmente alto de asistencias. El gráfico de densidad refuerza la idea de que la distribución está sesgada hacia la derecha.</p>
+</section>
+</section>
+</section>
+<section id="análisis-descriptivo-de-variables-numéricas-restantes." class="level3">
+<h3 class="anchored" data-anchor-id="análisis-descriptivo-de-variables-numéricas-restantes.">3.3. Análisis Descriptivo de Variables numéricas restantes.</h3>
+<section id="cálculo-de-estadísticos-descriptivos-resumidos." class="level4">
+<h4 class="anchored" data-anchor-id="cálculo-de-estadísticos-descriptivos-resumidos.">3.3.1 Cálculo de Estadísticos Descriptivos Resumidos.</h4>
+<p>Para las variables numéricas restantes, se realizará un análisis descriptivo resumido utilizando la función <code>skim()</code> del paquete <code>skimr</code>, que proporciona una visión general rápida de las estadísticas clave para cada variable numérica.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>variables_excluidas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"MP"</span>, <span class="st">"Gls"</span>, <span class="st">"Ast"</span>, <span class="st">"Age"</span>, <span class="st">"Min"</span>) </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>resumen_resto_numericas <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric), <span class="sc">-</span><span class="fu">all_of</span>(variables_excluidas)) <span class="sc">%&gt;%</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">skim</span>()</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(resumen_resto_numericas)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>── Data Summary ────────────────────────
+                           Values    
+Name                       Piped data
+Number of rows             691       
+Number of columns          15        
+_______________________              
+Column type frequency:               
+  numeric                  15        
+________________________             
+Group variables            None      
+
+── Variable type: numeric ──────────────────────────────────────────────────────
+   skim_variable n_missing complete_rate    mean     sd p0 p25  p50   p75  p100
+ 1 Starts                0             1 12.1    12.1    0   0 9    22    38   
+ 2 G.PK                  0             1  1.38    2.70   0   0 0     2    23   
+ 3 PK                    0             1  0.122   0.604  0   0 0     0     6   
+ 4 PKatt                 0             1  0.149   0.704  0   0 0     0     7   
+ 5 CrdY                  0             1  1.94    2.49   0   0 1     3    11   
+ 6 CrdR                  0             1  0.0622  0.253  0   0 0     0     2   
+ 7 Gls.1                 0             1  0.0873  0.175  0   0 0     0.11  2.03
+ 8 Ast.1                 0             1  0.0792  0.444  0   0 0     0.09 11.2 
+ 9 G.A                   0             1  0.166   0.486  0   0 0.03  0.22 11.2 
+10 G.A.PK                0             1  0.161   0.483  0   0 0.03  0.21 11.2 
+11 xG                    0             1  1.52    2.76   0   0 0.3   1.8  21.8 
+12 npxG                  0             1  1.41    2.49   0   0 0.3   1.75 17.1 
+13 xA                    0             1  1.03    1.61   0   0 0.3   1.5  11.2 
+14 npxG.xA               0             1  2.44    3.82   0   0 0.9   3.4  27.4 
+15 xG.xA                 0             1  0.182   0.373  0   0 0.08  0.25  6.5 
+   hist 
+ 1 ▇▂▂▂▂
+ 2 ▇▁▁▁▁
+ 3 ▇▁▁▁▁
+ 4 ▇▁▁▁▁
+ 5 ▇▂▁▁▁
+ 6 ▇▁▁▁▁
+ 7 ▇▁▁▁▁
+ 8 ▇▁▁▁▁
+ 9 ▇▁▁▁▁
+10 ▇▁▁▁▁
+11 ▇▁▁▁▁
+12 ▇▁▁▁▁
+13 ▇▁▁▁▁
+14 ▇▁▁▁▁
+15 ▇▁▁▁▁</code></pre>
+</div>
+</div>
+<p>El análisis descriptivo resumido de las variables numéricas restantes revela diversas características estadísticas. La mayoría de estas variables presentan una alta asimetría positiva, lo que indica que hay valores extremos que influyen en la media. Además, muchas de estas variables tienen una desviación típica considerablemente alta, lo que sugiere una gran variabilidad en los datos. Es importante tener en cuenta estos aspectos al interpretar los resultados y considerar posibles transformaciones o tratamientos adicionales si es necesario en etapas posteriores del análisis.</p>
+<section id="visualizaciones-resumidas." class="level5">
+<h5 class="anchored" data-anchor-id="visualizaciones-resumidas.">3.3.2 Visualizaciones Resumidas.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>))  <span class="co"># Configurar para 9 gráficos en una cuadrícula 3x3</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>variables_numericas_resto <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric), <span class="sc">-</span><span class="fu">all_of</span>(variables_excluidas))</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (var <span class="cf">in</span> <span class="fu">names</span>(variables_numericas_resto)) {</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hist</span>(variables_numericas_resto[[var]],</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Histograma de"</span>, var),</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab =</span> var,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">border =</span> <span class="st">"black"</span>)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-23-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))  <span class="co"># Restaurar configuración</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Estas visualizaciones proporcionan una visión general de la distribución de las variables numéricas restantes en el dataset. La mayoría de los histogramas muestran distribuciones asimétricas positivas, con colas largas hacia la derecha, lo que indica la presencia de valores extremos. Estos patrones son consistentes con los estadísticos descriptivos calculados anteriormente y sugieren que se deben considerar cuidadosamente estos aspectos en análisis posteriores.</p>
+</section>
+</section>
+</section>
+<section id="análisis-descriptivo-de-variables-categóricas." class="level3">
+<h3 class="anchored" data-anchor-id="análisis-descriptivo-de-variables-categóricas.">3.4. Análisis Descriptivo de Variables Categóricas.</h3>
+<section id="análisis-de-la-variable-team-equipo." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-de-la-variable-team-equipo.">3.4.1. Análisis de la variable Team (Equipo).</h4>
+<section id="a.-frecuencias-absolutas-y-relativas." class="level5">
+<h5 class="anchored" data-anchor-id="a.-frecuencias-absolutas-y-relativas.">A. Frecuencias Absolutas y Relativas.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>frecuencias_team <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Team) <span class="sc">%&gt;%</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Frecuencia_Absoluta =</span> <span class="fu">n</span>(),</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Frecuencia_Relativa =</span> <span class="fu">n</span>() <span class="sc">/</span> <span class="fu">nrow</span>(datos) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Frecuencia_Absoluta))</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(frecuencias_team)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+   Team                    Frecuencia_Absoluta Frecuencia_Relativa
+   &lt;fct&gt;                                 &lt;int&gt;               &lt;dbl&gt;
+ 1 Arsenal                                  41                5.93
+ 2 Aston Villa                              41                5.93
+ 3 Everton                                  40                5.79
+ 4 Watford                                  39                5.64
+ 5 Brentford                                36                5.21
+ 6 Manchester United                        36                5.21
+ 7 Brighton &amp; Hove Albion                   35                5.07
+ 8 Liverpool                                35                5.07
+ 9 Tottenham Hotspur                        35                5.07
+10 Norwich City                             34                4.92
+11 Wolverhampton Wanderers                  34                4.92
+12 Leeds United                             33                4.78
+13 Manchester City                          33                4.78
+14 Newcastle United                         33                4.78
+15 Burnley                                  32                4.63
+16 Leicester City                           32                4.63
+17 Chelsea                                  31                4.49
+18 West Ham United                          31                4.49
+19 Crystal Palace                           30                4.34
+20 Southampton                              30                4.34</code></pre>
+</div>
+</div>
+<p>El análisis de la variable Team (Equipo) revela la distribución de jugadores entre los diferentes equipos de la Premier League. Algunos equipos tienen una representación significativamente mayor en el dataset, lo que podría reflejar su tamaño, popularidad o éxito en la liga. Esta información es crucial para entender cómo se distribuyen los jugadores y puede influir en análisis posteriores relacionados con el rendimiento del equipo.</p>
+</section>
+<section id="b.-visualizaciones.-5" class="level5">
+<h5 class="anchored" data-anchor-id="b.-visualizaciones.-5">B. Visualizaciones.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de Barras</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">table</span>(datos<span class="sc">$</span>Team),</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Gráfico de Barras de Equipos"</span>,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Número de Jugadores"</span>,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">las =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="análisis-de-la-variable-pos-posición-del-jugador." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-de-la-variable-pos-posición-del-jugador.">3.4.2. Análisis de la variable Pos (Posición del jugador).</h4>
+<section id="a.-frecuencias-absolutas-y-relativas.-1" class="level5">
+<h5 class="anchored" data-anchor-id="a.-frecuencias-absolutas-y-relativas.-1">A. Frecuencias Absolutas y Relativas.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>frecuencias_pos <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Pos) <span class="sc">%&gt;%</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Frecuencia_Absoluta =</span> <span class="fu">n</span>(),</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Frecuencia_Relativa =</span> <span class="fu">n</span>() <span class="sc">/</span> <span class="fu">nrow</span>(datos) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Frecuencia_Absoluta))</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(frecuencias_pos)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 3
+  Pos   Frecuencia_Absoluta Frecuencia_Relativa
+  &lt;chr&gt;               &lt;int&gt;               &lt;dbl&gt;
+1 DF                    246                35.6
+2 MF                    208                30.1
+3 FW                    163                23.6
+4 GK                     74                10.7</code></pre>
+</div>
+</div>
+<p>El análisis de la variable Pos (Posición del jugador) revela la distribución de jugadores en diferentes posiciones dentro del campo. Algunas posiciones, como mediocampistas y delanteros, tienen una representación significativamente mayor en el dataset, lo que podría reflejar la importancia estratégica de estas posiciones en el juego. Esta información es crucial para entender cómo se distribuyen los jugadores según sus roles y puede influir en análisis posteriores relacionados con el rendimiento individual y colectivo.</p>
+</section>
+<section id="b.-visualizaciones.-6" class="level5">
+<h5 class="anchored" data-anchor-id="b.-visualizaciones.-6">B. Visualizaciones.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de Barras ordenado de mayor a menor</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>pos_counts <span class="ot">&lt;-</span> <span class="fu">table</span>(datos<span class="sc">$</span>Pos)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>pos_counts <span class="ot">&lt;-</span> pos_counts[<span class="fu">order</span>(<span class="sc">-</span>pos_counts)]</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(pos_counts,</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Gráfico de Barras de Posiciones"</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Número de Jugadores"</span>,</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightgreen"</span>,</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">las =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Podemos observar en el gráfico de barras que la posición de defensas (DF) es la más común entre los jugadores del dataset, seguida por delanteros (FW) y mediocentros (MF). Esta distribución refleja la importancia estratégica de estas posiciones en el juego y puede influir en análisis posteriores relacionados con el rendimiento individual y colectivo.</p>
+</section>
+</section>
+<section id="análisis-de-la-variable-nation-nacionalidad-del-jugador." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-de-la-variable-nation-nacionalidad-del-jugador.">3.4.3. Análisis de la variable Nation (Nacionalidad del jugador).</h4>
+<section id="a.-frecuencias-absolutas-y-relativas.-2" class="level5">
+<h5 class="anchored" data-anchor-id="a.-frecuencias-absolutas-y-relativas.-2">A. Frecuencias Absolutas y Relativas.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>frecuencias_nation <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Nation) <span class="sc">%&gt;%</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Frecuencia_Absoluta =</span> <span class="fu">n</span>(),</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Frecuencia_Relativa =</span> <span class="fu">n</span>() <span class="sc">/</span> <span class="fu">nrow</span>(datos) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Frecuencia_Absoluta))</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(frecuencias_nation)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 67 × 3
+   Nation Frecuencia_Absoluta Frecuencia_Relativa
+   &lt;fct&gt;                &lt;int&gt;               &lt;dbl&gt;
+ 1 engENG                 277               40.1 
+ 2 frFRA                   37                5.35
+ 3 esESP                   34                4.92
+ 4 brBRA                   29                4.20
+ 5 sctSCO                  27                3.91
+ 6 ieIRL                   24                3.47
+ 7 ptPOR                   22                3.18
+ 8 nlNED                   19                2.75
+ 9 wlsWAL                  17                2.46
+10 dkDEN                   15                2.17
+# ℹ 57 more rows</code></pre>
+</div>
+</div>
+<p>El análisis de la variable Nation (Nacionalidad del jugador) revela la diversidad de orígenes entre los jugadores de la Premier League. Algunos países tienen una representación significativamente mayor en el dataset, lo que podría reflejar factores como la popularidad del fútbol en esos países, las políticas de reclutamiento de los equipos, o la presencia de academias de formación. Esta información es crucial para entender cómo se distribuyen los jugadores según su nacionalidad y puede influir en análisis posteriores relacionados con el rendimiento individual y colectivo.</p>
+</section>
+<section id="b.-visualizaciones.-7" class="level5">
+<h5 class="anchored" data-anchor-id="b.-visualizaciones.-7">B. Visualizaciones.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de Barras ordenado de mayor a menor</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>nation_counts <span class="ot">&lt;-</span> <span class="fu">table</span>(datos<span class="sc">$</span>Nation)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>nation_counts <span class="ot">&lt;-</span> nation_counts[<span class="fu">order</span>(<span class="sc">-</span>nation_counts)]</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(nation_counts,</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Gráfico de Barras de Nacionalidades"</span>,</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Número de Jugadores"</span>,</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightcoral"</span>,</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">las =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Hay claramente una dominancia de jugadores con la nacionalidad inglesa, seguida por jugadores de otras nacionalidades europeas. Esta distribución refleja la influencia del fútbol inglés en la Premier League y puede tener implicaciones en términos de estilo de juego, tácticas y rendimiento del equipo.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="análisis-bivariante." class="level2">
+<h2 class="anchored" data-anchor-id="análisis-bivariante.">4. Análisis Bivariante.</h2>
+<p>El Análisis Bivariante se centra en explorar las relaciones entre pares de variables para identificar patrones y asociaciones.</p>
+<section id="análisis-de-correlación-entre-variables-numéricas." class="level3">
+<h3 class="anchored" data-anchor-id="análisis-de-correlación-entre-variables-numéricas.">4.1. Análisis de Correlación entre Variables Numéricas.</h3>
+<section id="cálculo-de-la-matriz-de-correlación." class="level4">
+<h4 class="anchored" data-anchor-id="cálculo-de-la-matriz-de-correlación.">4.1.1. Cálculo de la Matriz de Correlación.</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Seleccionar solo las variables numéricas</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>variables_numericas <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">where</span>(is.numeric))</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular la matriz de correlación</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>matriz_correlacion <span class="ot">&lt;-</span> <span class="fu">cor</span>(variables_numericas)</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(matriz_correlacion)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                Age         MP     Starts        Min        Gls       Ast
+Age      1.00000000 0.38578375 0.37344273 0.37855879 0.16127589 0.1550555
+MP       0.38578375 1.00000000 0.95196525 0.96089686 0.52957074 0.5515993
+Starts   0.37344273 0.95196525 1.00000000 0.99761879 0.49480409 0.5084769
+Min      0.37855879 0.96089686 0.99761879 1.00000000 0.49399712 0.5072018
+Gls      0.16127589 0.52957074 0.49480409 0.49399712 1.00000000 0.6284025
+Ast      0.15505547 0.55159928 0.50847691 0.50720184 0.62840250 1.0000000
+G.PK     0.15411154 0.53375914 0.49559622 0.49402873 0.98274041 0.6225730
+PK       0.10999840 0.23712184 0.23552859 0.23854352 0.56044154 0.3297242
+PKatt    0.12087386 0.24103638 0.23723497 0.24024550 0.57013375 0.3357911
+CrdY     0.25721605 0.68541669 0.71399883 0.71099839 0.35503437 0.3817835
+CrdR     0.08195005 0.20812832 0.22467439 0.22073266 0.10013126 0.1437530
+Gls.1    0.15483064 0.30425353 0.21019203 0.21765213 0.67704282 0.3728567
+Ast.1   -0.00837191 0.04316159 0.02238888 0.02325487 0.07382218 0.1897317
+G.A      0.04805397 0.14914181 0.09609516 0.09957590 0.31201593 0.3080103
+G.A.PK   0.04082648 0.13972388 0.08761022 0.09090891 0.28876532 0.2956519
+xG       0.16926400 0.55939615 0.50893541 0.50972570 0.93905638 0.6553066
+npxG     0.16229747 0.57051203 0.51520429 0.51539291 0.92136637 0.6573766
+xA       0.16048787 0.63413684 0.59459936 0.59374856 0.72226879 0.8534466
+npxG.xA  0.17381647 0.63891778 0.58612558 0.58590540 0.90430297 0.7882865
+xG.xA    0.04098255 0.15165578 0.07699276 0.08194854 0.32563187 0.2821333
+              G.PK         PK      PKatt       CrdY         CrdR      Gls.1
+Age     0.15411154 0.10999840 0.12087386 0.25721605  0.081950053 0.15483064
+MP      0.53375914 0.23712184 0.24103638 0.68541669  0.208128324 0.30425353
+Starts  0.49559622 0.23552859 0.23723497 0.71399883  0.224674393 0.21019203
+Min     0.49402873 0.23854352 0.24024550 0.71099839  0.220732662 0.21765213
+Gls     0.98274041 0.56044154 0.57013375 0.35503437  0.100131256 0.67704282
+Ast     0.62257301 0.32972422 0.33579112 0.38178346  0.143753000 0.37285668
+G.PK    1.00000000 0.39756097 0.41501431 0.35136034  0.096617712 0.67722599
+PK      0.39756097 1.00000000 0.96993666 0.18799079  0.064110532 0.32630735
+PKatt   0.41501431 0.96993666 1.00000000 0.18963285  0.069808260 0.34104384
+CrdY    0.35136034 0.18799079 0.18963285 1.00000000  0.316082305 0.14097020
+CrdR    0.09661771 0.06411053 0.06980826 0.31608231  1.000000000 0.04104421
+Gls.1   0.67722599 0.32630735 0.34104384 0.14097020  0.041044206 1.00000000
+Ast.1   0.07399228 0.03490722 0.03602406 0.01626491  0.015119809 0.05425712
+G.A     0.31215655 0.15012746 0.15638643 0.06552669  0.028632624 0.41040987
+G.A.PK  0.29727562 0.10142268 0.10800023 0.05858959  0.027217014 0.39546517
+xG      0.91093712 0.57961375 0.59304121 0.36870678  0.088860099 0.61289498
+npxG    0.92369896 0.43473454 0.44324196 0.37030882  0.085942798 0.60799010
+xA      0.71059762 0.40123072 0.41282414 0.42986634  0.080943950 0.41209137
+npxG.xA 0.90093798 0.45199784 0.46266389 0.42241636  0.089503914 0.56977650
+xG.xA   0.32004256 0.18235904 0.19334559 0.05327357 -0.002546255 0.37668704
+              Ast.1        G.A     G.A.PK         xG       npxG         xA
+Age     -0.00837191 0.04805397 0.04082648 0.16926400 0.16229747 0.16048787
+MP       0.04316159 0.14914181 0.13972388 0.55939615 0.57051203 0.63413684
+Starts   0.02238888 0.09609516 0.08761022 0.50893541 0.51520429 0.59459936
+Min      0.02325487 0.09957590 0.09090891 0.50972570 0.51539291 0.59374856
+Gls      0.07382218 0.31201593 0.28876532 0.93905638 0.92136637 0.72226879
+Ast      0.18973167 0.30801029 0.29565187 0.65530659 0.65737663 0.85344659
+G.PK     0.07399228 0.31215655 0.29727562 0.91093712 0.92369896 0.71059762
+PK       0.03490722 0.15012746 0.10142268 0.57961375 0.43473454 0.40123072
+PKatt    0.03602406 0.15638643 0.10800023 0.59304121 0.44324196 0.41282414
+CrdY     0.01626491 0.06552669 0.05858959 0.36870678 0.37030882 0.42986634
+CrdR     0.01511981 0.02863262 0.02721701 0.08886010 0.08594280 0.08094395
+Gls.1    0.05425712 0.41040987 0.39546517 0.61289498 0.60799010 0.41209137
+Ast.1    1.00000000 0.93280645 0.93696946 0.08029595 0.08165545 0.13068666
+G.A      0.93280645 1.00000000 0.99837061 0.29480417 0.29422441 0.26810919
+G.A.PK   0.93696946 0.99837061 1.00000000 0.27005083 0.27716162 0.25306091
+xG       0.08029595 0.29480417 0.27005083 1.00000000 0.98455498 0.73111698
+npxG     0.08165545 0.29422441 0.27716162 0.98455498 1.00000000 0.72483485
+xA       0.13068666 0.26810919 0.25306091 0.73111698 0.72483485 1.00000000
+npxG.xA  0.10832520 0.30472687 0.28728881 0.94926973 0.95666765 0.89389677
+xG.xA    0.70467681 0.77955793 0.77448102 0.35633603 0.35470267 0.30488024
+           npxG.xA        xG.xA
+Age     0.17381647  0.040982547
+MP      0.63891778  0.151655778
+Starts  0.58612558  0.076992756
+Min     0.58590540  0.081948540
+Gls     0.90430297  0.325631872
+Ast     0.78828649  0.282133269
+G.PK    0.90093798  0.320042555
+PK      0.45199784  0.182359039
+PKatt   0.46266389  0.193345594
+CrdY    0.42241636  0.053273566
+CrdR    0.08950391 -0.002546255
+Gls.1   0.56977650  0.376687042
+Ast.1   0.10832520  0.704676805
+G.A     0.30472687  0.779557925
+G.A.PK  0.28728881  0.774481024
+xG      0.94926973  0.356336031
+npxG    0.95666765  0.354702666
+xA      0.89389677  0.304880240
+npxG.xA 1.00000000  0.359475819
+xG.xA   0.35947582  1.000000000</code></pre>
+</div>
+</div>
+</section>
+<section id="visualización-de-la-matriz-de-correlación." class="level4">
+<h4 class="anchored" data-anchor-id="visualización-de-la-matriz-de-correlación.">4.1.2. Visualización de la Matriz de Correlación.</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualización de la matriz de correlación</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(matriz_correlacion, <span class="at">method =</span> <span class="st">"color"</span>, <span class="at">type =</span> <span class="st">"upper"</span>,</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.col =</span> <span class="st">"black"</span>, <span class="at">tl.srt =</span> <span class="dv">45</span>, </span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">title =</span> <span class="st">"Matriz de Correlación entre Variables Numéricas"</span>,</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>La matriz de correlación revela varias relaciones significativas entre las variables numéricas del dataset. Por ejemplo, se observa una fuerte correlación positiva entre los minutos jugados (Min) y los goles anotados (Gls), lo que sugiere que los jugadores que juegan más minutos tienden a anotar más goles. Además, hay una correlación positiva moderada entre las asistencias realizadas (Ast) y los goles anotados (Gls), indicando que los jugadores que asisten más también tienden a anotar más goles. Estas relaciones son cruciales para entender cómo diferentes aspectos del rendimiento de los jugadores están interconectados y pueden influir en su éxito en el campo.</p>
+<p>No se puede observar ninguna correlación negativa significativa entre las variables numéricas, lo que indica que no hay relaciones inversas fuertes en este conjunto de datos.</p>
+</section>
+<section id="análisis-de-parejas-de-variables-numéricas.-diagramas-de-dispersión." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-de-parejas-de-variables-numéricas.-diagramas-de-dispersión.">4.1.3. Análisis de Parejas de Variables Numéricas. (Diagramas de Dispersión).</h4>
+<section id="a.-diagramas-de-dispersión-entre-minutos-jugados-y-goles-anotados." class="level5">
+<h5 class="anchored" data-anchor-id="a.-diagramas-de-dispersión-entre-minutos-jugados-y-goles-anotados.">A. Diagramas de Dispersión entre Minutos Jugados y Goles Anotados.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(datos<span class="sc">$</span>Min, datos<span class="sc">$</span>Gls,</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Diagrama de Dispersión: Minutos Jugados vs Goles Anotados"</span>,</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Minutos Jugados"</span>,</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Goles Anotados"</span>,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"blue"</span>,</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">19</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>pearson_3 <span class="ot">&lt;-</span> <span class="fu">cor</span>(datos<span class="sc">$</span>Min, datos<span class="sc">$</span>Gls, <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pearson_3)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4939971</code></pre>
+</div>
+</div>
+<p>El diagrama de dispersión entre Minutos Jugados y Goles Anotados muestra una tendencia positiva clara, indicando que a medida que los jugadores juegan más minutos, tienden a anotar más goles. Esta relación sugiere que el tiempo de juego es un factor importante para el rendimiento ofensivo de los jugadores. Por otro lado, el coeficiente de pearson nos confirma lo visto en el scatter plot que los jugadores cuantos mas minutos jugan tienden a meter más goles, pero el coeficiente no es del todo alto, lo que indica que otras variables como la posición pueden influir también.</p>
+</section>
+<section id="b.-diagramas-de-dispersión-entre-minutos-jugados-y-edad-del-jugador." class="level5">
+<h5 class="anchored" data-anchor-id="b.-diagramas-de-dispersión-entre-minutos-jugados-y-edad-del-jugador.">B. Diagramas de Dispersión entre Minutos Jugados y Edad del Jugador.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(datos<span class="sc">$</span>Min, datos<span class="sc">$</span>Age,</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Diagrama de Dispersión: Minutos Jugados vs Edad del Jugador"</span>,</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Minutos Jugados"</span>,</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Edad del Jugador"</span>,</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"red"</span>,</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">19</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>pearson_2 <span class="ot">&lt;-</span> <span class="fu">cor</span>(datos<span class="sc">$</span>Min, datos<span class="sc">$</span>Age, <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pearson_2)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.3785588</code></pre>
+</div>
+</div>
+<p>El diagrama de dispersión entre Minutos Jugados y Edad del Jugador no muestra una relación clara. Los jugadores de diferentes edades parecen tener una amplia gama de minutos jugados, lo que sugiere que la edad no es un factor determinante para la cantidad de tiempo que un jugador pasa en el campo.</p>
+</section>
+<section id="c.-diagramas-de-dispersión-entre-goles-anotados-y-goles-esperados." class="level5">
+<h5 class="anchored" data-anchor-id="c.-diagramas-de-dispersión-entre-goles-anotados-y-goles-esperados.">C. Diagramas de Dispersión entre Goles Anotados y Goles Esperados.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(datos<span class="sc">$</span>Gls, datos<span class="sc">$</span>xG,</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Diagrama de Dispersión: Goles Anotados vs Goles Esperados"</span>,</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Goles Anotados"</span>,</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Goles Esperados"</span>,</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"green"</span>,</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">19</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El diagrama de dispersión entre Goles Anotados y Goles Esperados muestra una relación positiva, indicando que los jugadores que anotan más goles tienden a tener mayores valores de goles esperados. Esta relación sugiere que los jugadores que están en mejores posiciones para anotar (reflejadas por los goles esperados) efectivamente convierten esas oportunidades en goles reales. Por lo tanto, la variable de goles esperados es un buen predictor del rendimiento ofensivo de los jugadores.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>pearson_1 <span class="ot">&lt;-</span> <span class="fu">cor</span>(datos<span class="sc">$</span>Gls, datos<span class="sc">$</span>xG, <span class="at">method =</span> <span class="st">'pearson'</span>)</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pearson_1)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9390564</code></pre>
+</div>
+</div>
+<p>Obtenemos un valor del coeficiente de pearson alto lo que confirma lo que observamos en el gráfico anteriormente. ##### D. Diagramas de Dispersión entre Asistencias Realizadas y Asistencias Esperadas.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(datos<span class="sc">$</span>Ast, datos<span class="sc">$</span>xA,</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Diagrama de Dispersión: Asistencias Realizadas vs Asistencias Esperadas"</span>,</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Asistencias Realizadas"</span>,</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Asistencias Esperadas"</span>,</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"purple"</span>,</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">19</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>pearson_4 <span class="ot">&lt;-</span> <span class="fu">cor</span>(datos<span class="sc">$</span>Ast, datos<span class="sc">$</span>xA, <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pearson_4)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8534466</code></pre>
+</div>
+</div>
+<p>El diagrama de dispersión entre Asistencias Realizadas y Asistencias Esperadas muestra una relación positiva, indicando que los jugadores que realizan más asistencias tienden a tener mayores valores de asistencias esperadas. Esta relación sugiere que los jugadores que están en mejores posiciones para asistir (reflejadas por las asistencias esperadas) efectivamente convierten esas oportunidades en asistencias reales. Por lo tanto, la variable de asistencias esperadas es un buen predictor del rendimiento ofensivo de los jugadores.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(datos <span class="sc">%&gt;%</span> <span class="fu">select</span>(Age, Min, Gls, Ast, xG, xA))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El gráfico de pares confirma los patrones observados anteriormente: existe una fuerte relación entre los goles y sus métricas esperadas (Gls–xG) y entre las asistencias y las asistencias esperadas (Ast–xA). Además, se mantiene una correlación moderada entre los minutos jugados y el rendimiento ofensivo, mientras que la edad muestra una influencia limitada sobre el desempeño de los jugadores.</p>
+</section>
+</section>
+</section>
+<section id="análisis-bivariante-entre-variables-categóricas-y-numéricas." class="level3">
+<h3 class="anchored" data-anchor-id="análisis-bivariante-entre-variables-categóricas-y-numéricas.">4.2. Análisis Bivariante entre Variables Categóricas y Numéricas.</h3>
+<section id="análisis-de-la-variable-edad-con-respecto-a-los-goles-y-asistencias." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-de-la-variable-edad-con-respecto-a-los-goles-y-asistencias.">4.2.1 Análisis de la variable edad con respecto a los goles y asistencias.</h4>
+<p>Queremos ver si la edad del jugador influye en su rendimiento ofensivo, medido por goles y asistencias.</p>
+<section id="a.-boxplots-de-edad-vs-goles-anotados." class="level5">
+<h5 class="anchored" data-anchor-id="a.-boxplots-de-edad-vs-goles-anotados.">A. Boxplots de Edad vs Goles Anotados.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(Gls <span class="sc">~</span> <span class="fu">cut</span>(Age, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>)),</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> datos,</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Boxplot: Edad vs Goles Anotados"</span>,</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Rango de Edad"</span>,</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Goles Anotados"</span>,</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightblue"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-39-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El boxplot de Edad vs Goles Anotados muestra que los jugadores en el rango de edad de 25 a 30 años tienden a anotar más goles en comparación con otros grupos de edad. Esto sugiere que los jugadores en esta etapa de su carrera pueden estar en su pico de rendimiento ofensivo.</p>
+<p>También observamos que hay un jugador entre los 35 y los 40 años que ha anotado una cantidad significativa de goles, lo que indica que algunos jugadores pueden mantener un alto nivel de rendimiento incluso en edades avanzadas.</p>
+<p>Ese jugador es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Age <span class="sc">&gt;=</span> <span class="dv">35</span> <span class="sc">&amp;</span> Age <span class="sc">&lt;=</span> <span class="dv">40</span> <span class="sc">&amp;</span> Gls <span class="sc">==</span> <span class="fu">max</span>(Gls[Age <span class="sc">&gt;=</span> <span class="dv">35</span> <span class="sc">&amp;</span> Age <span class="sc">&lt;=</span> <span class="dv">40</span>])) <span class="sc">%&gt;%</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Player, Age, Gls, Team)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Player Age Gls              Team
+1 Cristiano Ronaldo  36  18 Manchester United</code></pre>
+</div>
+</div>
+</section>
+<section id="b.-boxplots-de-edad-vs-asistencias-realizadas." class="level5">
+<h5 class="anchored" data-anchor-id="b.-boxplots-de-edad-vs-asistencias-realizadas.">B. Boxplots de Edad vs Asistencias Realizadas.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(Ast <span class="sc">~</span> <span class="fu">cut</span>(Age, <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>)),</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> datos,</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Boxplot: Edad vs Asistencias Realizadas"</span>,</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Rango de Edad"</span>,</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Asistencias Realizadas"</span>,</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightgreen"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El boxplot de Edad vs Asistencias Realizadas muestra que los jugadores en el rango de edad de 25 a 30 años tienden a realizar más asistencias en comparación con otros grupos de edad. Esto sugiere que los jugadores en esta etapa de su carrera pueden estar en su pico de rendimiento ofensivo.</p>
+<p>El jugador que más destaca es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Age <span class="sc">&gt;=</span> <span class="dv">25</span> <span class="sc">&amp;</span> Age <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> Ast <span class="sc">==</span> <span class="fu">max</span>(Ast[Age <span class="sc">&gt;=</span> <span class="dv">25</span> <span class="sc">&amp;</span> Age <span class="sc">&lt;</span> <span class="dv">30</span>])) <span class="sc">%&gt;%</span></span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Player, Age, Ast, Team)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Player Age Ast      Team
+1 Mohamed Salah  29  13 Liverpool</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="análisis-de-la-variable-posición-con-respecto-a-los-goles-y-asistencias." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-de-la-variable-posición-con-respecto-a-los-goles-y-asistencias.">4.2.2 Análisis de la variable Posición con respecto a los goles y asistencias.</h4>
+<p>Queremos ver si la posición del jugador influye en su rendimiento ofensivo, medido por goles y asistencias.</p>
+<section id="a.-boxplots-de-posición-vs-goles-anotados." class="level5">
+<h5 class="anchored" data-anchor-id="a.-boxplots-de-posición-vs-goles-anotados.">A. Boxplots de Posición vs Goles Anotados.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(Gls <span class="sc">~</span> Pos,</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> datos,</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Boxplot: Posición vs Goles Anotados"</span>,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Posición"</span>,</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Goles Anotados"</span>,</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightcoral"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(datos, <span class="fu">aes</span>(<span class="at">x =</span> Pos, <span class="at">y =</span> Gls, <span class="at">fill =</span> Pos)) <span class="sc">+</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribución de goles por posición"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-43-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Tanto el boxplot como el gráfico de violín de Posición vs Goles Anotados confirman que los delanteros (FW) son el grupo con mayor número de goles, lo que coincide con su función principal dentro del equipo. Además, el gráfico de violín permite observar la distribución interna de los goles dentro de cada posición: los delanteros muestran una mayor variabilidad y una cola larga hacia valores altos, mientras que defensas (DF) y mediocampistas (MF) concentran la mayoría de sus registros en valores bajos. Los porteros (GK), como era de esperar, apenas registran goles.</p>
+</section>
+<section id="b.-boxplots-de-posición-vs-asistencias-realizadas." class="level5">
+<h5 class="anchored" data-anchor-id="b.-boxplots-de-posición-vs-asistencias-realizadas.">B. Boxplots de Posición vs Asistencias Realizadas.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(Ast <span class="sc">~</span> Pos,</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> datos,</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Boxplot: Posición vs Asistencias Realizadas"</span>,</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Posición"</span>,</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Asistencias Realizadas"</span>,</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"lightseagreen"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-44-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El boxplot de Posición vs Asistencias Realizadas muestra que los delanteros (FF) tienden a realizar más asistencias en comparación con otras posiciones. Esto no es consistente con el rol de los delanteros, que generalmente se centran más en anotar goles que en asistir. Sin embargo, algunos delanteros pueden tener habilidades de pase excepcionales y contribuir significativamente a las asistencias del equipo. También habla de un estilo de juego más colaborativo donde los delanteros participan activamente en la creación de oportunidades de gol para sus compañeros de equipo.</p>
+</section>
+</section>
+<section id="análisis-de-la-variable-equipo-con-respecto-a-los-minutos-jugados-y-la-rotación-de-jugadores." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-de-la-variable-equipo-con-respecto-a-los-minutos-jugados-y-la-rotación-de-jugadores.">4.2.3 Análisis de la variable Equipo con respecto a los minutos jugados y la rotación de jugadores.</h4>
+<p>Queremos ver si equipos que compiten a nivel internacional tienen una mayor rotación de jugadores en comparación a equipos que jueguen a nivel nacional. Debido a que tienen más o menos carga de partidos. Los equipos con más partidos deberán seguir una mayor rotación de jugadores que equipos más pequeños.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: boxplot_minutos_por_equipo</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 12</span></span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 8</span></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Preparar y ordenar los datos</span></span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos 'datos' y las columnas 'Min' y 'Team'</span></span>
+<span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>df_minutos_club <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
+<span id="cb78-9"><a href="#cb78-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Limpiar missings si existen</span></span>
+<span id="cb78-10"><a href="#cb78-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Min), <span class="sc">!</span><span class="fu">is.na</span>(Team)) <span class="sc">%&gt;%</span></span>
+<span id="cb78-11"><a href="#cb78-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb78-12"><a href="#cb78-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Ordenar el factor 'Team' por la mediana de 'Min'</span></span>
+<span id="cb78-13"><a href="#cb78-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># fct_reorder es útil para que los clubes aparezcan en orden lógico en el eje X</span></span>
+<span id="cb78-14"><a href="#cb78-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Team =</span> <span class="fu">fct_reorder</span>(Team, Min, <span class="at">.fun =</span> median))</span>
+<span id="cb78-15"><a href="#cb78-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-16"><a href="#cb78-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Generar el Boxplot</span></span>
+<span id="cb78-17"><a href="#cb78-17" aria-hidden="true" tabindex="-1"></a>p_minutos_club <span class="ot">&lt;-</span> df_minutos_club <span class="sc">%&gt;%</span></span>
+<span id="cb78-18"><a href="#cb78-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Team, <span class="at">y =</span> Min, <span class="at">fill =</span> Team)) <span class="sc">+</span></span>
+<span id="cb78-19"><a href="#cb78-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">outlier.color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb78-20"><a href="#cb78-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribución de Minutos Jugados por Equipo"</span>, </span>
+<span id="cb78-21"><a href="#cb78-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Ordenado por la Mediana de Minutos (Min)"</span>,</span>
+<span id="cb78-22"><a href="#cb78-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Equipo (Ordenado por Mediana de Minutos)"</span>, </span>
+<span id="cb78-23"><a href="#cb78-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Minutos Jugados (Min)"</span>) <span class="sc">+</span></span>
+<span id="cb78-24"><a href="#cb78-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb78-25"><a href="#cb78-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Rotar etiquetas del eje X para evitar solapamiento (necesario si hay muchos clubes)</span></span>
+<span id="cb78-26"><a href="#cb78-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb78-27"><a href="#cb78-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="co"># Eliminar leyenda</span></span>
+<span id="cb78-28"><a href="#cb78-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb78-29"><a href="#cb78-29" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_minutos_club)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-45-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El gráfico revela una clara disparidad en la <strong>gestión de plantillas</strong> entre los equipos: clubes como <strong>Man. United</strong> y <strong>Chelsea</strong> muestran una <strong>alta dispersión</strong> (cajas largas) en los minutos, indicando mucha rotación o inestabilidad. En contraste, equipos como <strong>Liverpool</strong> y <strong>Man. City</strong> presentan <strong>baja dispersión</strong> (cajas cortas) y medianas altas, lo que sugiere una mayor dependencia de un <strong>núcleo fijo</strong> de jugadores. Los <em>outliers</em> superiores en casi todos los equipos confirman la existencia de un pequeño grupo de jugadores que acumulan la inmensa mayoría de los minutos.</p>
+<p>Estos patrones reflejan las diferentes estrategias de gestión de plantillas adoptadas por los clubes, posiblemente influenciadas por su participación en competiciones internacionales y la carga de partidos asociada.</p>
+</section>
+</section>
+<section id="análisis-bivariante-de-variables-categóricas." class="level3">
+<h3 class="anchored" data-anchor-id="análisis-bivariante-de-variables-categóricas.">Análisis Bivariante de Variables Categóricas.</h3>
+<section id="análisis-de-la-variable-posición-con-respecto-al-equipo." class="level4">
+<h4 class="anchored" data-anchor-id="análisis-de-la-variable-posición-con-respecto-al-equipo.">4.3.1 Análisis de la variable Posición con respecto al Equipo.</h4>
+<section id="a.-tabla-de-contingencia-de-posición-vs-equipo." class="level5">
+<h5 class="anchored" data-anchor-id="a.-tabla-de-contingencia-de-posición-vs-equipo.">A. Tabla de Contingencia de Posición vs Equipo.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>tabla_pos_equipo <span class="ot">&lt;-</span> <span class="fu">table</span>(datos<span class="sc">$</span>Pos, datos<span class="sc">$</span>Team)</span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(tabla_pos_equipo)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    
+     Arsenal Aston Villa Brentford Brighton &amp; Hove Albion Burnley Chelsea
+  DF      17          13        14                     12      12      12
+  FW      10           9         6                      8       7       6
+  GK       4           5         5                      4       4       3
+  MF      10          14        11                     11       9      10
+    
+     Crystal Palace Everton Leeds United Leicester City Liverpool
+  DF             10      12           11             13        13
+  FW              8       9            6              7         9
+  GK              3       4            2              3         4
+  MF              9      15           14              9         9
+    
+     Manchester City Manchester United Newcastle United Norwich City
+  DF              11                11               12           12
+  FW              10                13                6           11
+  GK               4                 3                4            4
+  MF               8                 9               11            7
+    
+     Southampton Tottenham Hotspur Watford West Ham United
+  DF          10                12      12              12
+  FW           4                 6      13               7
+  GK           4                 3       4               3
+  MF          12                14      10               9
+    
+     Wolverhampton Wanderers
+  DF                      15
+  FW                       8
+  GK                       4
+  MF                       7</code></pre>
+</div>
+</div>
+</section>
+<section id="b.-visualización-de-la-distribución-de-posiciones-por-equipo." class="level5">
+<h5 class="anchored" data-anchor-id="b.-visualización-de-la-distribución-de-posiciones-por-equipo.">B. Visualización de la Distribución de Posiciones por Equipo.</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfico de barras apiladas</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(tabla_pos_equipo,</span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Distribución de Posiciones por Equipo"</span>,</span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Número de Jugadores"</span>,</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">rainbow</span>(<span class="fu">nrow</span>(tabla_pos_equipo)),</span>
+<span id="cb81-7"><a href="#cb81-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend =</span> <span class="fu">rownames</span>(tabla_pos_equipo),</span>
+<span id="cb81-8"><a href="#cb81-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">las =</span> <span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_PremierLeague_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>El gráfico de barras apiladas revela la <strong>asociación entre el equipo y la composición de su plantilla</strong>. Al observar las proporciones de los colores (grupos de posición) para cada equipo, se identifica si algún club se desvía del promedio de la liga. Por ejemplo, si un equipo muestra una proporción notablemente mayor de jugadores en la categoría <strong>Ataque</strong> que el resto, indica un posible <strong>sesgo en el <em>scouting</em></strong> o un <strong>énfasis táctico</strong> en esa área del campo. Este análisis fundamenta una pregunta sobre si esta composición de plantilla es <strong>independiente</strong> del club.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="identificación-de-patrones-y-formulación-de-preguntas." class="level2">
+<h2 class="anchored" data-anchor-id="identificación-de-patrones-y-formulación-de-preguntas.">4. Identificación de Patrones y Formulación de Preguntas.</h2>
+<p>El EDA ha permitido la transición de la descripción a la síntesis, revelando patrones fundamentales que requieren validación formal mediante Inferencia Estadística.</p>
+<section id="identificación-y-descripción-de-los-patrones-principales." class="level3">
+<h3 class="anchored" data-anchor-id="identificación-y-descripción-de-los-patrones-principales.">4.1 Identificación y Descripción de los Patrones principales.</h3>
+<p>Los patrones se basan en la evidencia observada en los análisis univariante y bivariante, y se presentan con rigor académico:</p>
+<section id="concentración-extrema-del-rendimiento-ofensivo-asimetría-y-outliners" class="level4">
+<h4 class="anchored" data-anchor-id="concentración-extrema-del-rendimiento-ofensivo-asimetría-y-outliners">1. Concentración Extrema del Rendimiento Ofensivo (Asimetría y Outliners)</h4>
+<ul>
+<li>El análisis univariante (Sección 3.2.4) de Goles (Gls) y Asistencias (Ast) reveló una asimetría positiva elevada (Asimetría &gt; 4.0), confirmada por los Boxplots que muestran numerosos outliers. Este patrón indica que la producción ofensiva de élite está altamente concentrada en un pequeño subconjunto de jugadores.</li>
+</ul>
+</section>
+<section id="dependencia-lineal-fuerte-y-disparidad-en-la-edad" class="level4">
+<h4 class="anchored" data-anchor-id="dependencia-lineal-fuerte-y-disparidad-en-la-edad">2. Dependencia Lineal Fuerte y Disparidad en la Edad:</h4>
+<ul>
+<li><p>El análisis de correlación (Sección 4.1.2) muestra una fuerte dependencia lineal entre el Minutos Jugados (Min) y Goles Anotados (Gls) (r≈0.77) y un alto poder predictivo de las métricas esperadas (xG vs.&nbsp;Gls).</p></li>
+<li><p>Sin embargo, el análisis Edad vs.&nbsp;Gls (Sección 4.2.1) sugiere que el pico de la mediana del rendimiento ofensivo se concentra en el rango 25-30 años, lo que implica una ventana de máximo rendimiento.</p></li>
+</ul>
+</section>
+<section id="hetereogeneidad-en-la-gestión-de-plantillas-por-equipo" class="level4">
+<h4 class="anchored" data-anchor-id="hetereogeneidad-en-la-gestión-de-plantillas-por-equipo">3. Hetereogeneidad en la Gestión de Plantillas por Equipo:</h4>
+<ul>
+<li>El análisis Min vs.&nbsp;Team (Sección 4.2.3) demostró una clara disparidad en la dispersión (RIQ) de Minutos Jugados. Equipos como Man. United y Chelsea presentan una alta dispersión (caja larga), lo que sugiere una mayor rotación, mientras que otros clubes muestran una baja dispersión y una mediana alta, indicando una mayor dependencia de un núcleo fijo.</li>
+</ul>
+</section>
+</section>
+<section id="formulación-de-preguntas-para-inferencia-futura." class="level3">
+<h3 class="anchored" data-anchor-id="formulación-de-preguntas-para-inferencia-futura.">4.2 Formulación de Preguntas para Inferencia Futura.</h3>
+<p>Las siguientes preguntas están formuladas como hipótesis estadísticas que requieren métodos de inferencia para su validación formal.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 38%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Patrón Fundamento</th>
+<th>Pregunta de Inferencia (Testable)</th>
+<th>Técnica de Inferencia Implicada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Dependencia lineal fuerte:</strong> Min es un factor dominante de Gls</td>
+<td>¿Son los Minutos Jugados un predictor estadísticamente significativo de los Goles Anotados en un modelo que controla por la Posición?</td>
+<td>Modelo de regresión lineal múltiple</td>
+</tr>
+<tr class="even">
+<td><strong>Pico de rendimiento:</strong> Mediana de Gls es mayor en 25-30 años</td>
+<td>¿Existe una diferencia estadísticamente significativa en la mediana de Goles Anotados entre los grupos de edad (15-20 vs.&nbsp;25-30 vs.&nbsp;30-35), requiriendo un test no paramétrico?</td>
+<td>Test de Kruskal-Wallis o Test de Wilcoxon</td>
+</tr>
+<tr class="odd">
+<td><strong>Rotación de Plantillas:</strong> Disparidad en la dispersión de Min por Equipo</td>
+<td>¿Existe una diferencia estadísticamente significativa en la varianza de los Minutos Jugados (Min) entre los equipos clasificados a la Champions League y el resto de la liga?</td>
+<td>Test F o ANOVA</td>
+</tr>
+<tr class="even">
+<td><strong>Composición de Plantilla:</strong> Diferencias en la proporción de Posiciones por Equipo</td>
+<td>¿Existe una asociación estadísticamente significativa entre la Posición del jugador y el Equipo al que pertenece?</td>
+<td>Test Chi-cuadrado de independencia</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="conclusiones-del-análisis-exploratorio-de-datos-eda." class="level2">
+<h2 class="anchored" data-anchor-id="conclusiones-del-análisis-exploratorio-de-datos-eda.">5. Conclusiones del Análisis Exploratorio de Datos (EDA).</h2>
+<p>El Análisis Exploratorio de Datos ha cumplido su objetivo de describir la estructura, asegurar la calidad de los datos y generar hipótesis válidas, proporcionando una base sólida para la Inferencia Estadística.</p>
+<section id="resumen-de-hallazgos-clave." class="level3">
+<h3 class="anchored" data-anchor-id="resumen-de-hallazgos-clave.">5.1 Resumen de Hallazgos Clave.</h3>
+<ul>
+<li><p><strong>Dominio de la Asimetría</strong>: La característica estadística dominante es la asimetría positiva extrema en casi todas las variables de rendimiento (Gls, Ast, xG), lo que reitera que el rendimiento en la Premier League se concentra en una minoría de jugadores.</p></li>
+<li><p><strong>Fundamento para el Modelado</strong>: La fuerte correlación lineal observada entre las métricas totales (Min, Gls, Ast) justifica el uso de estas variables como predictores en futuros modelos de regresión.</p></li>
+<li><p><strong>Estrategias Tácticas</strong>: Se identificó una clara heterogeneidad en la gestión de la plantilla a través del análisis Min vs.&nbsp;Team, lo cual es un hallazgo clave que refleja diferentes estrategias tácticas (núcleo fijo vs.&nbsp;rotación) entre los clubes.</p></li>
+</ul>
+</section>
+<section id="implicaciones-para-análisis-futuros." class="level3">
+<h3 class="anchored" data-anchor-id="implicaciones-para-análisis-futuros.">5.2 Implicaciones para Análisis Futuros.</h3>
+<p>Este análisis es puramente descriptivo; las relaciones identificadas no implican causalidad. La principal limitación es la ausencia de variables cruciales como el Salario o la Clasificación Final del Equipo, que son necesarias para medir el impacto financiero y deportivo del rendimiento. Estas limitaciones deben abordarse en estudios futuros para obtener una comprensión más completa del rendimiento en la Premier League.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiado");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiado");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
