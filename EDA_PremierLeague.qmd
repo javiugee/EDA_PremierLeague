@@ -999,4 +999,3 @@ El Análisis Exploratorio de Datos ha cumplido su objetivo de describir la estru
 ### 5.2 Implicaciones para Análisis Futuros.
 
 Este análisis es puramente descriptivo; las relaciones identificadas no implican causalidad. La principal limitación es la ausencia de variables cruciales como el Salario o la Clasificación Final del Equipo, que son necesarias para medir el impacto financiero y deportivo del rendimiento. Estas limitaciones deben abordarse en estudios futuros para obtener una comprensión más completa del rendimiento en la Premier League.
-
